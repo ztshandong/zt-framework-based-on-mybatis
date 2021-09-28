@@ -11,13 +11,14 @@
     <packaging>jar</packaging>
 
     <description>Zt Framework Based On Mybatis</description>
+    <url>https://github.com/ztshandong/zt-framework-based-on-mybatis</url>
+
     <properties>
         <java.version>1.8</java.version>
         <gpg.skip>false</gpg.skip>
         <javadoc.skip>false</javadoc.skip>
         <spring.version>2.3.2.RELEASE</spring.version>
         <fastjson.version>1.2.78</fastjson.version>
-        <druid.version>1.2.6</druid.version>
         <mybatis.version>2.2.0</mybatis.version>
         <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
         <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
@@ -37,8 +38,8 @@
 
     <!-- SCM信息 -> git在github上托管 -->
     <scm>
-        <url>https://github.com/ztshandong/zt-framework-core</url>
-        <connection>scm:git:https://git@github.com/ztshandong/zt-framework-core.git</connection>
+        <url>https://github.com/ztshandong/zt-framework-based-on-mybatis.git</url>
+        <connection>scm:git:https://git@github.com/ztshandong/zt-framework-based-on-mybatis.git</connection>
     </scm>
 
     <!-- 开发者信息 -->
@@ -229,7 +230,7 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
             <version>${spring.version}</version>
-            <scope>provided</scope>
+            <!--            <scope>provided</scope>-->
         </dependency>
 
         <dependency>
@@ -239,12 +240,12 @@
             <scope>provided</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
-            <version>${druid.version}</version>
-            <scope>provided</scope>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>com.alibaba</groupId>-->
+        <!--            <artifactId>druid-spring-boot-starter</artifactId>-->
+        <!--            <version>${druid.version}</version>-->
+        <!--            <scope>provided</scope>-->
+        <!--        </dependency>-->
 
         <dependency>
             <groupId>mysql</groupId>
@@ -252,6 +253,14 @@
             <version>8.0.21</version>
             <scope>provided</scope>
         </dependency>
+
+        <!--        <dependency>-->
+        <!--            <groupId>com.sun</groupId>-->
+        <!--            <artifactId>tools</artifactId>-->
+        <!--            <version>1.8</version>-->
+        <!--            <scope>system</scope>-->
+        <!--            <systemPath>${env.JAVA_HOME}/lib/tools.jar</systemPath>-->
+        <!--        </dependency>-->
 
     </dependencies>
 
