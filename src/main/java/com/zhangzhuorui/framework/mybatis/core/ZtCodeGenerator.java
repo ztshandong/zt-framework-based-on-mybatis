@@ -1,18 +1,11 @@
 package com.zhangzhuorui.framework.mybatis.core;
 
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
-import org.apache.velocity.app.VelocityEngine;
-import org.apache.velocity.runtime.RuntimeConstants;
-import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -87,6 +80,16 @@ public class ZtCodeGenerator {
             return "";
         }
 
+        return "";
+
+        /*
+        添加依赖使用代码生成器
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity-engine-core</artifactId>
+            <version>2.2</version>
+        </dependency>
+
         VelocityEngine vEngine = new VelocityEngine();
         vEngine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
         vEngine.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
@@ -101,5 +104,7 @@ public class ZtCodeGenerator {
         template.merge(velocityContext, out);
         out.flush();
         return out.toString();
+         */
+
     }
 }

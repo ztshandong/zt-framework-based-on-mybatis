@@ -145,7 +145,7 @@ public class ZtSimpleBaseSelectProvider {
         ResultMap resultMap = (ResultMap) qw.getResultMap();
         StringBuilder sb = new StringBuilder();
         String tbName = tableAliase;
-        if (org.apache.commons.lang3.StringUtils.isEmpty(tbName)) {
+        if (StringUtils.isEmpty(tbName)) {
             tbName = qw.getTableName();
         }
         LinkedList<ZtQueryConditionEntity> conditons = qw.getConditons();
@@ -157,7 +157,7 @@ public class ZtSimpleBaseSelectProvider {
         });
         for (int i = 0; i < conditons.size(); i++) {
             ZtQueryConditionEntity conditon = conditons.get(i);
-            if (org.apache.commons.lang3.StringUtils.isEmpty(conditon.getColumnName())) {
+            if (StringUtils.isEmpty(conditon.getColumnName())) {
                 Optional<ResultMapping> any = resultMap.getResultMappings().stream().filter(t -> t.getProperty().equals(conditon.getFieldName())).findAny();
                 if (any.isPresent()) {
                     conditon.setColumnName(any.get().getColumn());
@@ -222,7 +222,7 @@ public class ZtSimpleBaseSelectProvider {
             });
             for (int i = 0; i < innerConditons.size(); i++) {
                 ZtQueryConditionEntity innerConditon = innerConditons.get(i);
-                if (org.apache.commons.lang3.StringUtils.isEmpty(innerConditon.getColumnName())) {
+                if (StringUtils.isEmpty(innerConditon.getColumnName())) {
                     Optional<ResultMapping> any = innerResultMap.getResultMappings().stream().filter(t -> t.getProperty().equals(innerConditon.getFieldName())).findAny();
                     if (any.isPresent()) {
                         innerConditon.setColumnName(any.get().getColumn());
