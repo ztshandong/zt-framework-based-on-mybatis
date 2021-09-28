@@ -1,0 +1,26 @@
+package ${packageName};
+
+import com.zhangzhuorui.framework.mybatis.usedemo.${entityName};
+import com.zhangzhuorui.framework.mybatis.simplebaseservice.ZtSimpleBaseServiceImpl;
+import org.springframework.stereotype.Service;
+
+/**
+ * $!{comment} 服务实现类
+ *
+ * @author ${author}
+ * @createDate : ${date}
+ * @description   :
+ * @updateUser    :
+ * @updateDate    :
+ * @updateRemark  :
+ * @version       :  1.0
+ */
+@Service
+public class ${entityName}ServiceImpl extends ZtSimpleBaseServiceImpl<${entityName}> implements I${entityName}Service {
+
+    @Override
+    public String getTableName() {
+        return "${tableName}";
+    }
+
+}
