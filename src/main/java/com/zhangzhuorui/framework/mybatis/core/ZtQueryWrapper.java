@@ -147,6 +147,18 @@ public class ZtQueryWrapper<T> implements Serializable {
         joinWrapperList.add(leftWrapper);
     }
 
+    /**
+     * @author :  zhangtao
+     * @createDate :  2021/9/27 上午10:01
+     * @param null   :
+     * @return :
+     * @description :  添加的列
+     * key: tableNameTmp + resultMapping.getColumn()
+     * value: tableNameTmp + "." + columnName + ", "
+     * @updateUser :
+     * @updateDate :
+     * @updateRemark :
+     */
     Map<String, String> selectSqlMap = new TreeMap<>();
 
     /**
@@ -166,10 +178,16 @@ public class ZtQueryWrapper<T> implements Serializable {
             tableNameTmp = ztJoinWrapper.getTableAliase();
             resultMappings = ((ResultMap) ztJoinWrapper.getZtQueryWrapper().getResultMap()).getResultMappings();
         }
+        int size = joinWrapperList.size();
         for (ResultMapping resultMapping : resultMappings) {
             if (resultMapping.getNestedQueryId() == null && resultMapping.getNestedResultMapId() == null && resultMapping.getColumn() != null) {
                 String columnName = ZtTableInfoHelperStr.getLegalColumnName(resultMapping.getColumn());
-                String s = tableNameTmp + "." + columnName + ", ";//" AS " + resultMapping.getProperty() +
+                String s = tableNameTmp + "." + columnName;
+                if (size > 0 && !ZtTableInfoHelperStr.getIllegalNames().contains(resultMapping.getProperty())) {
+                    //联表查询才取别名，因为联表查询结果解析不是用的ResultMap
+                    s = s + " AS " + resultMapping.getProperty();
+                }
+                s = s + ", ";
                 selectSqlMap.put(tableNameTmp + resultMapping.getColumn(), s);
             }
         }
@@ -214,8 +232,10 @@ public class ZtQueryWrapper<T> implements Serializable {
 
         String columnName = ZtTableInfoHelperStr.getLegalColumnName(resultMapping.getColumn());
         String s = tableNameTmp + "." + columnName;
-        if (!ZtTableInfoHelperStr.getIllegalNames().contains(aliasNameTmp)) {
-            // s = s + " AS " + aliasNameTmp;
+
+        if (joinWrapperList.size() > 0 && !ZtTableInfoHelperStr.getIllegalNames().contains(aliasNameTmp)) {
+            //联表查询才取别名，因为联表查询结果解析不是用的ResultMap
+            s = s + " AS " + aliasNameTmp;
         }
         s = s + ", ";
         selectSqlMap.put(tableNameTmp + resultMapping.getColumn(), s);
