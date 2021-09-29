@@ -1,7 +1,8 @@
-package ${packageName};
+package ${packageName}.service.impl;
 
-import com.zhangzhuorui.framework.mybatis.usedemo.${entityName};
+import ${packageName}.entity.${entityName};
 import com.zhangzhuorui.framework.mybatis.simplebaseservice.ZtSimpleBaseServiceImpl;
+import ${packageName}.service.I${entityName}Service;
 import org.springframework.stereotype.Service;
 
 /**

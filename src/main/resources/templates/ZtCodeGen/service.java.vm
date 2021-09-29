@@ -1,6 +1,6 @@
-package ${packageName};
+package ${packageName}.service;
 
-import com.zhangzhuorui.framework.mybatis.usedemo.${entityName};
+import ${packageName}.entity.${entityName};
 import com.zhangzhuorui.framework.mybatis.simplebaseservice.IZtSimpleBaseService;
 
 /**

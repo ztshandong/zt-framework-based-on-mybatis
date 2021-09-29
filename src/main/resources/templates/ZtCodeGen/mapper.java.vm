@@ -1,6 +1,6 @@
-package ${packageName};
+package ${packageName}.mapper;
 
-import com.zhangzhuorui.framework.mybatis.usedemo.${entityName};
+import ${packageName}.entity.${entityName};
 import com.zhangzhuorui.framework.mybatis.simplebasemapper.ZtSimpleBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
