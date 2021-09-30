@@ -195,7 +195,7 @@
         <dependency>
             <groupId>com.zhangzhuorui.framework</groupId>
             <artifactId>core</artifactId>
-            <version>1.1.RELEASE</version>
+            <version>1.1.SNAPSHOT</version>
         </dependency>
 
         <dependency>

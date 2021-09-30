@@ -101,9 +101,13 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         return (IZtSimpleBaseService<T>) bean1;
     }
 
+    private static String dbProduct;
+
     @PostConstruct
     protected void init() throws Exception {
-        String dbProduct = getDataSource().getConnection().getMetaData().getDatabaseProductName();
+        if (dbProduct == null) {
+            dbProduct = getDataSource().getConnection().getMetaData().getDatabaseProductName();
+        }
         if ("mysql".equalsIgnoreCase(dbProduct)) {
             ZtTableInfoHelperStr.DB_PRE = ZtTableInfoHelperStr.DB_PRE_MYSQL;
             ZtTableInfoHelperStr.DB_END = ZtTableInfoHelperStr.DB_END_MYSQL;

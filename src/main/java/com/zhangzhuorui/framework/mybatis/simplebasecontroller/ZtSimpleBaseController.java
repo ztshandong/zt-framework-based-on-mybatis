@@ -46,14 +46,14 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     @RequestMapping(value = ZtStrUtils.GET_ENUM_NAME, method = RequestMethod.GET)
     @ResponseBody
     public ZtResBeanEx getAllEnumName() {
-        return ZtResBeanEx.ok(ZtSpringUtil.enumName);
+        return ZtResBeanEx.ok(ZtSpringUtil.getEnumName());
     }
 
     // @ApiOperation(value = "标准接口：根据枚举名获取枚举内容，前端可以用")
     @RequestMapping(value = ZtStrUtils.GET_ENUM_INFO, method = RequestMethod.GET)
     @ResponseBody
     public ZtResBeanEx getEnumInfo(String enumName) {
-        return ZtResBeanEx.ok(ZtSpringUtil.enumInfoMap.get(enumName));
+        return ZtResBeanEx.ok(ZtSpringUtil.getEnumInfo(enumName));
     }
 
     // @ApiOperation(value = "标准接口：刷新本服务所有缓存")
