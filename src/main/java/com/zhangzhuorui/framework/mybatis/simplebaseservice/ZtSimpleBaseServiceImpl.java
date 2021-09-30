@@ -316,7 +316,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
                 if (resultMapping.getNestedQueryId() == null && resultMapping.getNestedResultMapId() == null && resultMapping.getColumn() != null) {
                     ZtQueryConditionEntity entity = new ZtQueryConditionEntity();
                     entity.setFieldName(propertyName);
-                    String column = ZtTableInfoHelperStr.getLegalColumnName(resultMapping.getColumn());
+                    String column = resultMapping.getColumn();
                     entity.setColumnName(column);
                     entityList.add(entity);
                 }

@@ -1,7 +1,6 @@
 package com.zhangzhuorui.framework.mybatis.core;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.MappedTypes;
@@ -22,11 +21,11 @@ import java.util.List;
 
 @MappedTypes({List.class})
 @MappedJdbcTypes({JdbcType.VARCHAR})
-public class ZtFastjsonTypeHandler extends ZtAbstractJsonTypeHandler<List> {
-    private static final Logger log = LoggerFactory.getLogger(ZtFastjsonTypeHandler.class);
+public class ZtFastjsonListTypeHandler extends ZtAbstractJsonTypeHandler<List> {
+    private static final Logger log = LoggerFactory.getLogger(ZtFastjsonListTypeHandler.class);
     private Class<List> type;
 
-    public ZtFastjsonTypeHandler(Class<List> type) throws Exception {
+    public ZtFastjsonListTypeHandler(Class<List> type) throws Exception {
         if (log.isTraceEnabled()) {
             log.trace("FastjsonTypeHandler(" + type + ")");
         }
@@ -43,6 +42,7 @@ public class ZtFastjsonTypeHandler extends ZtAbstractJsonTypeHandler<List> {
 
     @Override
     protected String toJson(List obj) {
-        return JSON.toJSONString(obj, new SerializerFeature[]{SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullListAsEmpty, SerializerFeature.WriteNullStringAsEmpty});
+        // return JSON.toJSONString(obj, new SerializerFeature[]{SerializerFeature.WriteMapNullValue, SerializerFeature.WriteNullListAsEmpty, SerializerFeature.WriteNullStringAsEmpty});
+        return JSON.toJSONString(obj);
     }
 }

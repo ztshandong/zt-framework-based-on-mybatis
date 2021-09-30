@@ -23,6 +23,7 @@ public class ZtSimpleBaseInsertProvider {
     public String ztSimpleInsert(@Param(ZtTableInfoHelperStr.PARAM_NAME) ZtQueryWrapper qw) {
         LinkedList<ZtQueryConditionEntity> conditons = qw.getConditons();
         ResultMapping idResultMapping = ((ResultMap) qw.getResultMap()).getIdResultMappings().get(0);
+        List<ResultMapping> resultMappings = ((ResultMap) qw.getResultMap()).getResultMappings();
 
         StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO ").append(qw.getTableName()).append(" ( ");
@@ -31,15 +32,17 @@ public class ZtSimpleBaseInsertProvider {
         for (int i = 0; i < conditons.size(); i++) {
             ZtQueryConditionEntity conditon = conditons.get(i);
             String fieldName = conditon.getFieldName();
-            String columnName = ZtTableInfoHelperStr.getLegalColumnName(conditon.getColumnName());
-            String idColumn = ZtTableInfoHelperStr.getLegalColumnName(idResultMapping.getColumn());
+            String columnName = conditon.getColumnName();
+            String idColumn = idResultMapping.getColumn();
             if (!qw.isManualId()) {
                 if (columnName.equals(idColumn)) {
                     continue;
                 }
             }
-            columnNames.append(columnName).append(", ");
-            values.append("#{" + ZtTableInfoHelperStr.PARAM_NAME + ".obj.").append(fieldName).append("}").append(", ");
+            ResultMapping resultMapping = resultMappings.stream().filter(t -> t.getColumn().equalsIgnoreCase(columnName)).findAny().get();
+            String s = resultMapping.getTypeHandler().getClass().getName();
+            columnNames.append(ZtTableInfoHelperStr.getLegalColumnName(columnName)).append(", ");
+            values.append("#{" + ZtTableInfoHelperStr.PARAM_NAME + ".obj.").append(fieldName).append(", typeHandler = ").append(s).append(" }").append(", ");
         }
         columnNames.deleteCharAt(columnNames.length() - 2);
         values.deleteCharAt(values.length() - 2);
@@ -47,13 +50,13 @@ public class ZtSimpleBaseInsertProvider {
         sb.append(" ) VALUES ( ");
         sb.append(values);
         sb.append(" ) ;");
-        System.out.println(sb.toString());
         return sb.toString();
     }
 
     public String ztSimpleInsertBatch(@Param("list") List list, @Param(ZtTableInfoHelperStr.PARAM_NAME) ZtQueryWrapper qw) {
         LinkedList<ZtQueryConditionEntity> conditons = qw.getConditons();
         ResultMapping idResultMapping = ((ResultMap) qw.getResultMap()).getIdResultMappings().get(0);
+        List<ResultMapping> resultMappings = ((ResultMap) qw.getResultMap()).getResultMappings();
 
         StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO ").append(qw.getTableName()).append(" ( ");
@@ -61,16 +64,19 @@ public class ZtSimpleBaseInsertProvider {
         StringBuilder values = new StringBuilder();
         for (int i = 0; i < conditons.size(); i++) {
             ZtQueryConditionEntity conditon = conditons.get(i);
-            String columnName = ZtTableInfoHelperStr.getLegalColumnName(conditon.getColumnName());
-            String idColumn = ZtTableInfoHelperStr.getLegalColumnName(idResultMapping.getColumn());
+            String columnName = conditon.getColumnName();
+            String idColumn = idResultMapping.getColumn();
             String fieldName = conditon.getFieldName();
             if (!qw.isManualId()) {
                 if (columnName.equals(idColumn)) {
                     continue;
                 }
             }
-            columnNames.append(columnName).append(", ");
-            values.append("#{list[(INDEX)].").append(fieldName).append("}").append(", ");
+            ResultMapping resultMapping = resultMappings.stream().filter(t -> t.getColumn().equalsIgnoreCase(columnName)).findAny().get();
+            String s = resultMapping.getTypeHandler().getClass().getName();
+
+            columnNames.append(ZtTableInfoHelperStr.getLegalColumnName(columnName)).append(", ");
+            values.append("#{list[(INDEX)].").append(fieldName).append(", typeHandler = ").append(s).append(" }").append(", ");
         }
         columnNames.deleteCharAt(columnNames.length() - 2);
 
@@ -88,7 +94,6 @@ public class ZtSimpleBaseInsertProvider {
         values.deleteCharAt(values.length() - 2);
 
         sb.append(values);
-        System.out.println(sb.toString());
         return sb.toString();
     }
 

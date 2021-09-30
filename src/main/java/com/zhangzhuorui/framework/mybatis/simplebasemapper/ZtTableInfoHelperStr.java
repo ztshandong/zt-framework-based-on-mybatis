@@ -77,8 +77,8 @@ public class ZtTableInfoHelperStr {
             int size = qw.getJoinWrapperList().size();
             for (ResultMapping resultMapping : collect) {
                 String property = resultMapping.getProperty();
-                String columnName = ZtTableInfoHelperStr.getLegalColumnName(resultMapping.getColumn());
-                sb.append(qw.getTableName()).append(".").append(columnName);
+                String columnName = resultMapping.getColumn();
+                sb.append(qw.getTableName()).append(".").append(ZtTableInfoHelperStr.getLegalColumnName(columnName));
                 if (!ILLEGAL_NAMES.contains(property) && size > 0) {
                     //联表查询才取别名，因为联表查询结果解析不是用的ResultMap
                     sb.append(" AS ").append(resultMapping.getProperty());

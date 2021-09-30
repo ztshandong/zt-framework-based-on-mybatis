@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author :  张涛 zhangtao
@@ -24,7 +25,8 @@ public class ZtSimpleBaseUpdateProvider {
 
     public String ztSimpleUpdateByPrimaryKey(@Param(ZtTableInfoHelperStr.PARAM_NAME) ZtQueryWrapper qw) throws Exception {
         ResultMapping idResultMapping = ((ResultMap) qw.getResultMap()).getIdResultMappings().get(0);
-        String idColumn = ZtTableInfoHelperStr.getLegalColumnName(idResultMapping.getColumn());
+        String idColumn = idResultMapping.getColumn();
+        List<ResultMapping> resultMappings = ((ResultMap) qw.getResultMap()).getResultMappings();
 
         StringBuilder sb = new StringBuilder();
         sb.append("UPDATE ").append(qw.getTableName()).append(" SET ");
@@ -35,7 +37,7 @@ public class ZtSimpleBaseUpdateProvider {
         for (int i = 0; i < conditons.size(); i++) {
             ZtQueryConditionEntity conditon = conditons.get(i);
             String fieldName = conditon.getFieldName();
-            String columnName = ZtTableInfoHelperStr.getLegalColumnName(conditon.getColumnName());
+            String columnName = conditon.getColumnName();
             if (columnName.equals(idColumn)) {
                 continue;
             }
@@ -49,22 +51,23 @@ public class ZtSimpleBaseUpdateProvider {
                     versionPlus = 1L;
                 }
                 versionPlus = versionPlus + 1;
-                setStr.append(versionFieldName).append(" = " + versionPlus + ", ");
+                setStr.append(ZtTableInfoHelperStr.getLegalColumnName(versionColumnName)).append(" = " + versionPlus + ", ");
             } else {
                 if (conditon.getUpdateFieldUseNativeSql()) {
-                    setStr.append(columnName).append(" = " + conditon.getUpdateFieldNativeSql() + ", ");
+                    setStr.append(ZtTableInfoHelperStr.getLegalColumnName(columnName)).append(" = " + conditon.getUpdateFieldNativeSql() + ", ");
                 } else {
-                    setStr.append(columnName).append(" = #{" + ZtTableInfoHelperStr.PARAM_NAME + ".obj.").append(fieldName).append("}, ");
+                    ResultMapping resultMapping = resultMappings.stream().filter(t -> t.getColumn().equalsIgnoreCase(columnName)).findAny().get();
+                    String s = resultMapping.getTypeHandler().getClass().getName();
+                    setStr.append(ZtTableInfoHelperStr.getLegalColumnName(columnName)).append(" = #{" + ZtTableInfoHelperStr.PARAM_NAME + ".obj.").append(fieldName).append(", typeHandler = ").append(s).append(" }").append(", ");
                 }
             }
         }
         setStr.deleteCharAt(setStr.length() - 2);
         sb.append(setStr);
-        sb.append(" WHERE ").append(idColumn).append(" = #{" + ZtTableInfoHelperStr.PARAM_NAME + ".obj.").append(idResultMapping.getProperty()).append("}");
+        sb.append(" WHERE ").append(ZtTableInfoHelperStr.getLegalColumnName(idColumn)).append(" = #{" + ZtTableInfoHelperStr.PARAM_NAME + ".obj.").append(idResultMapping.getProperty()).append("}");
         if (!StringUtils.isEmpty(versionFieldName)) {
-            sb.append(" AND ").append(versionColumnName).append(" = #{" + ZtTableInfoHelperStr.PARAM_NAME + ".obj.").append(versionFieldName).append("}");
+            sb.append(" AND ").append(ZtTableInfoHelperStr.getLegalColumnName(versionColumnName)).append(" = #{" + ZtTableInfoHelperStr.PARAM_NAME + ".obj.").append(versionFieldName).append("}");
         }
-        System.out.println(sb.toString());
         return sb.toString();
     }
 

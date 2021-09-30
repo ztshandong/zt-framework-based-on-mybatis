@@ -98,11 +98,11 @@ public class ZtQueryWrapper<T> implements Serializable {
 
         if (ztJoinWrapper == null) {
             ResultMapping resultMapping = ((ResultMap) this.resultMap).getResultMappings().stream().filter(t -> t.getProperty().equals(getFieldName)).findAny().get();
-            column = ZtTableInfoHelperStr.getLegalColumnName(resultMapping.getColumn());
+            column = resultMapping.getColumn();
         } else {
             Object joinResultMap = ztJoinWrapper.getZtQueryWrapper().getResultMap();
             ResultMapping resultMapping = ((ResultMap) joinResultMap).getResultMappings().stream().filter(t -> t.getProperty().equals(getFieldName)).findAny().get();
-            column = ZtTableInfoHelperStr.getLegalColumnName(resultMapping.getColumn());
+            column = resultMapping.getColumn();
         }
         return column;
     }
@@ -137,13 +137,13 @@ public class ZtQueryWrapper<T> implements Serializable {
      */
     public <T, T1> void doJoin(ZtJoinWrapper<T> leftWrapper, ZtPropertyFunc<T, ?> leftField, ZtJoinWrapper<T1> rightWrapper, ZtPropertyFunc<T1, ?> rightField) {
         String leftAliase = leftWrapper.getTableAliase();
-        leftWrapper.setOnLeftColumn(" " + leftAliase + "." + getColumnName(leftWrapper, leftField) + " ");
+        leftWrapper.setOnLeftColumn(" " + leftAliase + "." + ZtTableInfoHelperStr.getLegalColumnName(getColumnName(leftWrapper, leftField) + " "));
 
         String rightAliase = this.getTableName();
         if (rightWrapper != null) {
             rightAliase = rightWrapper.getTableAliase();
         }
-        leftWrapper.setOnRightColumn(" " + rightAliase + "." + getColumnName(rightWrapper, rightField) + " ");
+        leftWrapper.setOnRightColumn(" " + rightAliase + "." + ZtTableInfoHelperStr.getLegalColumnName(getColumnName(rightWrapper, rightField) + " "));
         joinWrapperList.add(leftWrapper);
     }
 
