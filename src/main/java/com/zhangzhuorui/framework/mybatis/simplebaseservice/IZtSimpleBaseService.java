@@ -152,7 +152,7 @@ public interface IZtSimpleBaseService<T> {
 
     ZtParamEntity<T> ztBeforeSimpleUpdateByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception;
 
-    ZtParamEntity<T> ztDoSimpleUpdateByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception;
+    // ZtParamEntity<T> ztDoSimpleUpdateByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception;
 
     ZtParamEntity<T> ztAfterSimpleUpdateByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception;
 
@@ -168,7 +168,7 @@ public interface IZtSimpleBaseService<T> {
 
     ZtParamEntity<T> ztBeforeSimpleDeleteByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception;
 
-    ZtParamEntity<T> ztDoSimpleDeleteByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception;
+    // ZtParamEntity<T> ztDoSimpleDeleteByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception;
 
     ZtParamEntity<T> ztAfterSimpleDeleteByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception;
 
@@ -184,9 +184,11 @@ public interface IZtSimpleBaseService<T> {
 
     ZtParamEntity<T> ztBeforeSimpleDeleteByPrimaryKeyBatch(ZtParamEntity<T> ztParamEntity) throws Exception;
 
-    ZtParamEntity<T> ztDoSimpleDeleteByPrimaryKeyBatch(ZtParamEntity<T> ztParamEntity) throws Exception;
+    // ZtParamEntity<T> ztDoSimpleDeleteByPrimaryKeyBatch(ZtParamEntity<T> ztParamEntity) throws Exception;
 
     ZtParamEntity<T> ztAfterSimpleDeleteByPrimaryKeyBatch(ZtParamEntity<T> ztParamEntity) throws Exception;
+
+    ZtParamEntity<T> ztCannotSimpleDeleteByPrimaryKeyBatch(ZtParamEntity<T> ztParamEntity) throws Exception;
 
     /**
      * 单条新增。只保存有值的字段，其余字段使用数据库默认值。
@@ -198,7 +200,7 @@ public interface IZtSimpleBaseService<T> {
 
     ZtParamEntity<T> ztBeforeSimpleInsert(ZtParamEntity<T> ztParamEntity) throws Exception;
 
-    ZtParamEntity<T> ztDoSimpleInsert(ZtParamEntity<T> ztParamEntity) throws Exception;
+    // ZtParamEntity<T> ztDoSimpleInsert(ZtParamEntity<T> ztParamEntity) throws Exception;
 
     ZtParamEntity<T> ztAfterSimpleInsert(ZtParamEntity<T> ztParamEntity) throws Exception;
 
@@ -214,8 +216,10 @@ public interface IZtSimpleBaseService<T> {
 
     ZtParamEntity<T> ztBeforeSimpleInsertBatch(ZtParamEntity<T> ztParamEntity) throws Exception;
 
-    ZtParamEntity<T> ztDoSimpleInsertBatch(ZtParamEntity<T> ztParamEntity) throws Exception;
+    // ZtParamEntity<T> ztDoSimpleInsertBatch(ZtParamEntity<T> ztParamEntity) throws Exception;
 
     ZtParamEntity<T> ztAfterSimpleInsertBatch(ZtParamEntity<T> ztParamEntity) throws Exception;
+
+    ZtParamEntity<T> ztCannotSimpleInsertBatch(ZtParamEntity<T> ztParamEntity) throws Exception;
 
 }

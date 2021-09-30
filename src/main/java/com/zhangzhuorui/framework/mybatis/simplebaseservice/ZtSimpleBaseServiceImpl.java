@@ -480,6 +480,13 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         return ztParamEntity;
     }
 
+    /**
+     * 只有查询才允许直接调用do方法
+     *
+     * @param ztParamEntity
+     * @return
+     * @throws Exception
+     */
     @Override
     public final ZtParamEntity<T> ztDoSimpleSelectProvider(ZtParamEntity<T> ztParamEntity) throws Exception {
         ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
@@ -591,7 +598,13 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     public final ZtParamEntity<T> ztSimpleUpdateByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception {
         ztParamEntity = getThisService().ztBeforeSimpleUpdateByPrimaryKey(ztParamEntity);
         if (ztParamEntity.isCanUpdate()) {
-            ztParamEntity = getThisService().ztDoSimpleUpdateByPrimaryKey(ztParamEntity);
+            // ztParamEntity = getThisService().ztDoSimpleUpdateByPrimaryKey(ztParamEntity);
+            ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
+            Integer integer = getZtSimpleBaseMapper().ztSimpleUpdateByPrimaryKey(ztQueryWrapper);
+            ztParamEntity.setUpdateRow(integer);
+            if (integer > 0) {
+                ztParamEntity.setUpdateRes(true);
+            }
             if (ztParamEntity.isCanUpdate() && ztParamEntity.isUpdateRes()) {
                 ztParamEntity = getThisService().ztAfterSimpleUpdateByPrimaryKey(ztParamEntity);
             } else {
@@ -616,17 +629,17 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         return ztParamEntity;
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public final ZtParamEntity<T> ztDoSimpleUpdateByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception {
-        ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
-        Integer integer = getZtSimpleBaseMapper().ztSimpleUpdateByPrimaryKey(ztQueryWrapper);
-        ztParamEntity.setUpdateRow(integer);
-        if (integer > 0) {
-            ztParamEntity.setUpdateRes(true);
-        }
-        return ztParamEntity;
-    }
+    // @Override
+    // @Transactional(rollbackFor = Exception.class)
+    // public final ZtParamEntity<T> ztDoSimpleUpdateByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception {
+    //     ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
+    //     Integer integer = getZtSimpleBaseMapper().ztSimpleUpdateByPrimaryKey(ztQueryWrapper);
+    //     ztParamEntity.setUpdateRow(integer);
+    //     if (integer > 0) {
+    //         ztParamEntity.setUpdateRes(true);
+    //     }
+    //     return ztParamEntity;
+    // }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -649,7 +662,13 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     public final ZtParamEntity<T> ztSimpleDeleteByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception {
         ztParamEntity = getThisService().ztBeforeSimpleDeleteByPrimaryKey(ztParamEntity);
         if (ztParamEntity.isCanDelete()) {
-            ztParamEntity = getThisService().ztDoSimpleDeleteByPrimaryKey(ztParamEntity);
+            // ztParamEntity = getThisService().ztDoSimpleDeleteByPrimaryKey(ztParamEntity);
+            ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
+            Integer integer = getZtSimpleBaseMapper().ztSimpleDeleteByPrimaryKey(ztQueryWrapper);
+            ztParamEntity.setDeleteRow(integer);
+            if (integer > 0) {
+                ztParamEntity.setDeleteRes(true);
+            }
             if (ztParamEntity.isCanDelete() && ztParamEntity.isDeleteRes()) {
                 ztParamEntity = getThisService().ztAfterSimpleDeleteByPrimaryKey(ztParamEntity);
             } else {
@@ -668,17 +687,17 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         return ztParamEntity;
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public final ZtParamEntity<T> ztDoSimpleDeleteByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception {
-        ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
-        Integer integer = getZtSimpleBaseMapper().ztSimpleDeleteByPrimaryKey(ztQueryWrapper);
-        ztParamEntity.setDeleteRow(integer);
-        if (integer > 0) {
-            ztParamEntity.setDeleteRes(true);
-        }
-        return ztParamEntity;
-    }
+    // @Override
+    // @Transactional(rollbackFor = Exception.class)
+    // public final ZtParamEntity<T> ztDoSimpleDeleteByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception {
+    //     ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
+    //     Integer integer = getZtSimpleBaseMapper().ztSimpleDeleteByPrimaryKey(ztQueryWrapper);
+    //     ztParamEntity.setDeleteRow(integer);
+    //     if (integer > 0) {
+    //         ztParamEntity.setDeleteRes(true);
+    //     }
+    //     return ztParamEntity;
+    // }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -700,8 +719,22 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Transactional(rollbackFor = Exception.class)
     public final ZtParamEntity<T> ztSimpleDeleteByPrimaryKeyBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
         ztParamEntity = getThisService().ztBeforeSimpleDeleteByPrimaryKeyBatch(ztParamEntity);
-        ztParamEntity = getThisService().ztDoSimpleDeleteByPrimaryKeyBatch(ztParamEntity);
-        ztParamEntity = getThisService().ztAfterSimpleDeleteByPrimaryKeyBatch(ztParamEntity);
+        if (ztParamEntity.isCanDelete()) {
+            // ztParamEntity = getThisService().ztDoSimpleDeleteByPrimaryKey(ztParamEntity);
+            ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
+            Integer integer = getZtSimpleBaseMapper().ztSimpleDeleteByPrimaryKeyBatch(ztQueryWrapper);
+            ztParamEntity.setDeleteRow(integer);
+            if (integer > 0) {
+                ztParamEntity.setDeleteRes(true);
+            }
+            if (ztParamEntity.isCanDelete() && ztParamEntity.isDeleteRes()) {
+                ztParamEntity = getThisService().ztAfterSimpleDeleteByPrimaryKeyBatch(ztParamEntity);
+            } else {
+                ztParamEntity = getThisService().ztCannotSimpleDeleteByPrimaryKeyBatch(ztParamEntity);
+            }
+        } else {
+            ztParamEntity = getThisService().ztCannotSimpleDeleteByPrimaryKeyBatch(ztParamEntity);
+        }
         return ztParamEntity;
     }
 
@@ -714,21 +747,29 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         return ztParamEntity;
     }
 
+    // @Override
+    // @Transactional(rollbackFor = Exception.class)
+    // public final ZtParamEntity<T> ztDoSimpleDeleteByPrimaryKeyBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
+    //     ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
+    //     Integer integer = getZtSimpleBaseMapper().ztSimpleDeleteByPrimaryKeyBatch(ztQueryWrapper);
+    //     ztParamEntity.setDeleteRow(integer);
+    //     if (integer > 0) {
+    //         ztParamEntity.setDeleteRes(true);
+    //     }
+    //     return ztParamEntity;
+    // }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public final ZtParamEntity<T> ztDoSimpleDeleteByPrimaryKeyBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
-        ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
-        Integer integer = getZtSimpleBaseMapper().ztSimpleDeleteByPrimaryKeyBatch(ztQueryWrapper);
-        ztParamEntity.setDeleteRow(integer);
-        if (integer > 0) {
-            ztParamEntity.setDeleteRes(true);
-        }
+    public ZtParamEntity<T> ztAfterSimpleDeleteByPrimaryKeyBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
         return ztParamEntity;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ZtParamEntity<T> ztAfterSimpleDeleteByPrimaryKeyBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
+    public ZtParamEntity<T> ztCannotSimpleDeleteByPrimaryKeyBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
+        ztParamEntity.getZtResBeanEx().setCode(ZtStrUtils.FAIL_CODE);
+        ztParamEntity.getZtResBeanEx().setMsg(ZtStrUtils.FAIL_MSG);
         return ztParamEntity;
     }
     //endregion
@@ -739,7 +780,15 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     public final ZtParamEntity<T> ztSimpleInsert(ZtParamEntity<T> ztParamEntity) throws Exception {
         ztParamEntity = getThisService().ztBeforeSimpleInsert(ztParamEntity);
         if (ztParamEntity.isCanInsert()) {
-            ztParamEntity = getThisService().ztDoSimpleInsert(ztParamEntity);
+
+            Integer integer = getZtSimpleBaseMapper().ztSimpleInsert(ztParamEntity.getZtQueryWrapper());
+            ztParamEntity.setInsertRow(integer);
+            if (integer > 0) {
+                ztParamEntity.setInsertRes(true);
+            }
+
+            // ztParamEntity = getThisService().ztDoSimpleInsert(ztParamEntity);
+
             if (ztParamEntity.isCanInsert() && ztParamEntity.isInsertRes()) {
                 ztParamEntity = getThisService().ztAfterSimpleInsert(ztParamEntity);
             } else {
@@ -780,17 +829,17 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         return ztParamEntity;
     }
 
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public final ZtParamEntity<T> ztDoSimpleInsert(ZtParamEntity<T> ztParamEntity) throws Exception {
-        ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
-        Integer integer = getZtSimpleBaseMapper().ztSimpleInsert(ztQueryWrapper);
-        ztParamEntity.setInsertRow(integer);
-        if (integer > 0) {
-            ztParamEntity.setInsertRes(true);
-        }
-        return ztParamEntity;
-    }
+    // @Override
+    // @Transactional(rollbackFor = Exception.class)
+    // public final ZtParamEntity<T> ztDoSimpleInsert(ZtParamEntity<T> ztParamEntity) throws Exception {
+    //     ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
+    //     Integer integer = getZtSimpleBaseMapper().ztSimpleInsert(ztQueryWrapper);
+    //     ztParamEntity.setInsertRow(integer);
+    //     if (integer > 0) {
+    //         ztParamEntity.setInsertRes(true);
+    //     }
+    //     return ztParamEntity;
+    // }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -812,8 +861,22 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Transactional(rollbackFor = Exception.class)
     public final ZtParamEntity<T> ztSimpleInsertBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
         ztParamEntity = getThisService().ztBeforeSimpleInsertBatch(ztParamEntity);
-        ztParamEntity = getThisService().ztDoSimpleInsertBatch(ztParamEntity);
-        ztParamEntity = getThisService().ztAfterSimpleInsertBatch(ztParamEntity);
+        if (ztParamEntity.isCanInsert()) {
+            // ztParamEntity = getThisService().ztDoSimpleInsertBatch(ztParamEntity);
+            ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
+            Integer integer = getZtSimpleBaseMapper().ztSimpleInsertBatch(ztParamEntity.getEntityList(), ztQueryWrapper);
+            ztParamEntity.setInsertRow(integer);
+            if (integer > 0) {
+                ztParamEntity.setInsertRes(true);
+            }
+            if (ztParamEntity.isCanInsert() && ztParamEntity.isInsertRes()) {
+                ztParamEntity = getThisService().ztAfterSimpleInsertBatch(ztParamEntity);
+            } else {
+                ztParamEntity = getThisService().ztCannotSimpleInsertBatch(ztParamEntity);
+            }
+        } else {
+            ztParamEntity = getThisService().ztCannotSimpleInsertBatch(ztParamEntity);
+        }
         return ztParamEntity;
     }
 
@@ -856,21 +919,29 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         return ztParamEntity;
     }
 
+    // @Override
+    // @Transactional(rollbackFor = Exception.class)
+    // public final ZtParamEntity<T> ztDoSimpleInsertBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
+    //     ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
+    //     Integer integer = getZtSimpleBaseMapper().ztSimpleInsertBatch(ztParamEntity.getEntityList(), ztQueryWrapper);
+    //     ztParamEntity.setInsertRow(integer);
+    //     if (integer > 0) {
+    //         ztParamEntity.setInsertRes(true);
+    //     }
+    //     return ztParamEntity;
+    // }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public final ZtParamEntity<T> ztDoSimpleInsertBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
-        ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
-        Integer integer = getZtSimpleBaseMapper().ztSimpleInsertBatch(ztParamEntity.getEntityList(), ztQueryWrapper);
-        ztParamEntity.setInsertRow(integer);
-        if (integer > 0) {
-            ztParamEntity.setInsertRes(true);
-        }
+    public ZtParamEntity<T> ztAfterSimpleInsertBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
         return ztParamEntity;
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ZtParamEntity<T> ztAfterSimpleInsertBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
+    public ZtParamEntity<T> ztCannotSimpleInsertBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
+        ztParamEntity.getZtResBeanEx().setCode(ZtStrUtils.FAIL_CODE);
+        ztParamEntity.getZtResBeanEx().setMsg(ZtStrUtils.FAIL_MSG);
         return ztParamEntity;
     }
     //endregion
