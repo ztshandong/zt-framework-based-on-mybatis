@@ -77,16 +77,6 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         return resultMap;
     }
 
-    @Override
-    public String getVersionFieldName() {
-        return null;
-    }
-
-    @Override
-    public String getLogicDeleteFieldName() {
-        return null;
-    }
-
     @Autowired
     DataSource dataSource;
 
@@ -326,7 +316,15 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
                 }
             }
         }
+
+        wrapper = afterGetQueryWrapper(wrapper);
+
         return wrapper;
+    }
+
+    @Override
+    public ZtQueryWrapper<T> afterGetQueryWrapper(ZtQueryWrapper<T> ztQueryWrapper) {
+        return ztQueryWrapper;
     }
 
     /**

@@ -31,6 +31,8 @@ public interface IZtSimpleBaseService<T> {
      */
     ZtQueryWrapper<T> getQueryWrapper(T obj, boolean writeMapNullValue);
 
+    ZtQueryWrapper<T> afterGetQueryWrapper(ZtQueryWrapper<T> ztQueryWrapper);
+
     /**
      * Service对应的表名，因为没有加额外的注解，所以只能用这种方法记录表名
      *
@@ -43,14 +45,18 @@ public interface IZtSimpleBaseService<T> {
      *
      * @return
      */
-    String getVersionFieldName();
+    default String getVersionFieldName() {
+        return null;
+    }
 
     /**
      * 逻辑删除字段
      *
      * @return
      */
-    String getLogicDeleteFieldName();
+    default String getLogicDeleteFieldName() {
+        return null;
+    }
 
     /**
      * 代表删除的值
