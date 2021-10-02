@@ -433,6 +433,9 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
             LinkedList<ZtQueryConditionEntity> conditons = ztQueryWrapper.getConditons();
             conditons.sort(Comparator.comparing(o -> o.getQueryType().getIntValue()));
         }
+
+        ztParamEntity = afternitSimpleWrapper(ztParamEntity);
+
         return ztParamEntity;
     }
 
