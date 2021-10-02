@@ -2,8 +2,10 @@ package com.zhangzhuorui.framework.mybatis.simplebaseservice;
 
 import com.zhangzhuorui.framework.core.ZtPropertyFunc;
 import com.zhangzhuorui.framework.core.ZtQueryConditionEntity;
+import com.zhangzhuorui.framework.core.ZtResBeanEx;
 import com.zhangzhuorui.framework.mybatis.core.ZtParamEntity;
 import com.zhangzhuorui.framework.mybatis.core.ZtQueryWrapper;
+import org.apache.ibatis.mapping.SqlCommandType;
 
 import java.util.List;
 
@@ -20,18 +22,21 @@ public interface IZtSimpleBaseService<T> {
 
     ZtParamEntity<T> getInitZtParamEntity(T obj);
 
+    ZtParamEntity<T> getInitZtParamEntity(T obj, SqlCommandType sqlCommandType);
+
+    ZtQueryWrapper<T> getInitZtQueryWrapper(T obj);
+
     ZtParamEntity<T> getInitZtParamEntityWithOutCount(T obj);
 
-    /**
-     * 动态生成需要的条件。核心方法之一
-     *
-     * @param obj
-     * @param writeMapNullValue
-     * @return
-     */
-    ZtQueryWrapper<T> getQueryWrapper(T obj, boolean writeMapNullValue);
+    ZtParamEntity<T> initSimpleWrapper(ZtParamEntity<T> ztParamEntity, SqlCommandType sqlCommandType);
 
-    ZtQueryWrapper<T> afterGetQueryWrapper(ZtQueryWrapper<T> ztQueryWrapper);
+    ZtParamEntity<T> afterUseCommonZtQueryWrapper(ZtParamEntity<T> ztParamEntity, SqlCommandType sqlCommandType);
+
+    ZtParamEntity<T> afterInitSimpleWrapper(ZtParamEntity<T> ztParamEntity, SqlCommandType sqlCommandType);
+
+    // ZtQueryWrapper<T> getQueryWrapper(T obj, boolean writeMapNullValue, SqlCommandType sqlCommandType);
+
+    // ZtQueryWrapper<T> afterGetQueryWrapper(ZtQueryWrapper<T> ztQueryWrapper, SqlCommandType sqlCommandType);
 
     /**
      * Service对应的表名，因为没有加额外的注解，所以只能用这种方法记录表名
@@ -86,15 +91,19 @@ public interface IZtSimpleBaseService<T> {
 
     void setZtQueryConditionEntity(ZtQueryConditionEntity entity, ZtPropertyFunc<T, ?> func);
 
-    ZtParamEntity<T> initSimpleWrapper(ZtParamEntity<T> ztParamEntity);
-
-    ZtParamEntity<T> afterInitSimpleWrapper(ZtParamEntity<T> ztParamEntity);
-
     T getObj(ZtParamEntity<T> ztParamEntity);
 
     List<T> getList(ZtParamEntity<T> ztParamEntity);
 
-    List<T> ztSimpleGetList(T t);
+    List<T> ztSimpleGetList(T t) throws Exception;
+
+    T ztSimpleInsert(T t) throws Exception;
+
+    List<T> ztSimpleInsertBatch(List<T> list) throws Exception;
+
+    ZtResBeanEx ztSimpleDelete(T t) throws Exception;
+
+    ZtResBeanEx ztSimpleUpdate(T t) throws Exception;
 
     /**
      * 查询所有数据。适用于一些数据量比较少的基础信息类的表，理论上这种数据都可以用缓存。业务表尽量不要用
@@ -127,7 +136,7 @@ public interface IZtSimpleBaseService<T> {
 
     ZtParamEntity<T> ztBeforeSimpleSelectProvider(ZtParamEntity<T> ztParamEntity) throws Exception;
 
-    ZtParamEntity<T> ztDoSimpleSelectProvider(ZtParamEntity<T> ztParamEntity) throws Exception;
+    // ZtParamEntity<T> ztDoSimpleSelectProvider(ZtParamEntity<T> ztParamEntity) throws Exception;
 
     ZtParamEntity<T> ztAfterSimpleSelectProvider(ZtParamEntity<T> ztParamEntity) throws Exception;
 

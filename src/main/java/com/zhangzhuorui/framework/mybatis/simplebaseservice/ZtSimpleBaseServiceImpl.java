@@ -19,6 +19,7 @@ import com.zhangzhuorui.framework.mybatis.simplebasemapper.ZtTableInfoHelperStr;
 import org.apache.ibatis.binding.MapperProxy;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
+import org.apache.ibatis.mapping.SqlCommandType;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -226,11 +227,22 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
      */
     @Override
     public ZtParamEntity<T> getInitZtParamEntity(T obj) {
+        return getInitZtParamEntity(obj, SqlCommandType.SELECT);
+    }
+
+    @Override
+    public ZtParamEntity<T> getInitZtParamEntity(T obj, SqlCommandType sqlCommandType) {
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setEntity(obj);
-        ztParamEntity = this.initSimpleWrapper(ztParamEntity);
+        ztParamEntity = this.initSimpleWrapper(ztParamEntity, sqlCommandType);
         ztParamEntity.setUseCommonZtQueryWrapper(false);
         return ztParamEntity;
+    }
+
+    @Override
+    public ZtQueryWrapper<T> getInitZtQueryWrapper(T obj) {
+        ZtParamEntity<T> initZtParamEntity = getInitZtParamEntity(obj);
+        return initZtParamEntity.getZtQueryWrapper();
     }
 
     /**
@@ -251,18 +263,20 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     }
 
     /**
+     * 动态生成需要的条件。核心方法之一
+     *
      * @param obj               :
      * @param writeMapNullValue :
      * @return :  com.zhangzhuorui.framework.core.ZtQueryWrapper<T>
      * @author :  zhangtao
      * @createDate :  2021/9/26 下午9:58
-     * @description :  组装查询条件，增删改查都会用到。一改全改
+     * @description :  组装查询条件，增删改查都会用到。一改全改，这个不可随意修改
      * @updateUser :
      * @updateDate :
      * @updateRemark :
      */
-    @Override
-    public final ZtQueryWrapper<T> getQueryWrapper(T obj, boolean writeMapNullValue) {
+    // @Override
+    private final ZtQueryWrapper<T> getQueryWrapper(T obj, boolean writeMapNullValue, SqlCommandType sqlCommandType) {
         ZtQueryWrapper<T> wrapper = new ZtQueryWrapper<>();
         String logicDeleteFieldName = getLogicDeleteFieldName();
         wrapper.setTableName(getTableName());
@@ -325,15 +339,15 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
             }
         }
 
-        wrapper = afterGetQueryWrapper(wrapper);
+        // wrapper = afterGetQueryWrapper(wrapper, sqlCommandType);
 
         return wrapper;
     }
 
-    @Override
-    public ZtQueryWrapper<T> afterGetQueryWrapper(ZtQueryWrapper<T> ztQueryWrapper) {
-        return ztQueryWrapper;
-    }
+    // @Override
+    // public ZtQueryWrapper<T> afterGetQueryWrapper(ZtQueryWrapper<T> ztQueryWrapper, SqlCommandType sqlCommandType) {
+    //     return ztQueryWrapper;
+    // }
 
     /**
      * @param entity :
@@ -367,9 +381,10 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     public ZtParamEntity<T> ztSimpleSelectAll() throws Exception {
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
-        ztParamEntity = getThisService().initSimpleWrapper(ztParamEntity);
+        ztParamEntity = getThisService().initSimpleWrapper(ztParamEntity, SqlCommandType.SELECT);
         ztParamEntity.setNeedCount(false);
-        ztParamEntity = getThisService().ztDoSimpleSelectProvider(ztParamEntity);
+        ztParamEntity.setUseCommonZtQueryWrapper(false);
+        ztParamEntity = getThisService().ztSimpleSelectProvider(ztParamEntity);
         return ztParamEntity;
     }
 
@@ -378,21 +393,23 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
      * @return :  com.zhangzhuorui.framework.core.ZtParamEntity<T>
      * @author :  zhangtao
      * @createDate :  2021/9/26 下午10:00
-     * @description :  初始化查询条件
+     * @description :  初始化通用条件，就是所有的接口都要走的接口
+     * 如果需要手动调用initSimpleWrapper后调用ztSimpleSelectProvider，需要setUseCommonZtQueryWrapper(false)
      * @updateUser :
      * @updateDate :
      * @updateRemark :
      */
     @Override
-    public final ZtParamEntity<T> initSimpleWrapper(ZtParamEntity<T> ztParamEntity) {
+    public final ZtParamEntity<T> initSimpleWrapper(ZtParamEntity<T> ztParamEntity, SqlCommandType sqlCommandType) {
         if (ztParamEntity.getZtResBeanEx() == null) {
             ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
         }
+
         if (ztParamEntity.isUseCommonZtQueryWrapper()) {
             if (ztParamEntity.getEntity() != null) {
-                ztParamEntity.setZtQueryWrapper(this.getQueryWrapper(ztParamEntity.getEntity(), false));
+                ztParamEntity.setZtQueryWrapper(this.getQueryWrapper(ztParamEntity.getEntity(), false, sqlCommandType));
             } else if (ztParamEntity.getEntityList() != null && ztParamEntity.getEntityList().size() > 0) {
-                ztParamEntity.setZtQueryWrapper(this.getQueryWrapper(ztParamEntity.getEntityList().get(0), false));
+                ztParamEntity.setZtQueryWrapper(this.getQueryWrapper(ztParamEntity.getEntityList().get(0), false, sqlCommandType));
             } else {
                 //默认全表查询 ztSimpleSelectAll
                 try {
@@ -404,9 +421,8 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
-                ztParamEntity.setZtQueryWrapper(this.getQueryWrapper(ztParamEntity.getEntity(), false));
+                ztParamEntity.setZtQueryWrapper(this.getQueryWrapper(ztParamEntity.getEntity(), false, sqlCommandType));
             }
-            ZtQueryWrapper<T> ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
             T entity = ztParamEntity.getEntity();
             if (entity != null) {
                 Date startDate = entity.getStartDate();
@@ -429,46 +445,112 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
                 }
 
                 if (start != null && end != null) {
-                    ztQueryWrapper.andBetween(ZtBasicEntity::getGmtCreate, start, end);
+                    ztParamEntity.getZtQueryWrapper().andBetween(ZtBasicEntity::getGmtCreate, start, end);
                 } else if (start != null) {
                     entity.setGmtCreate(start);
-                    ztQueryWrapper.andGreatEquals(ZtBasicEntity::getGmtCreate);
+                    ztParamEntity.getZtQueryWrapper().andGreatEquals(ZtBasicEntity::getGmtCreate);
                 } else if (end != null) {
                     entity.setGmtCreate(end);
-                    ztQueryWrapper.andLessEquals(ZtBasicEntity::getGmtCreate);
+                    ztParamEntity.getZtQueryWrapper().andLessEquals(ZtBasicEntity::getGmtCreate);
                 }
             }
-            LinkedList<ZtQueryConditionEntity> conditons = ztQueryWrapper.getConditons();
-            conditons.sort(Comparator.comparing(o -> o.getQueryType().getIntValue()));
+            //这个在UseCommonZtQueryWrapper里面，只有UseCommonZtQueryWrapper才会进入
+            ztParamEntity = afterUseCommonZtQueryWrapper(ztParamEntity, sqlCommandType);
         }
-
-        ztParamEntity = afterInitSimpleWrapper(ztParamEntity);
+        //一定会走这个逻辑，只是预留一个接口，一般用不到
+        ztParamEntity = afterInitSimpleWrapper(ztParamEntity, sqlCommandType);
+        LinkedList<ZtQueryConditionEntity> conditons = ztParamEntity.getZtQueryWrapper().getConditons();
+        conditons.sort(Comparator.comparing(o -> o.getQueryType().getIntValue()));
 
         return ztParamEntity;
     }
 
+    /**
+     * 对ZtQueryWrapper预留的扩展接口，例如权限系统的权限字段赋值
+     *
+     * @param ztParamEntity  :
+     * @param sqlCommandType :
+     * @return :  com.zhangzhuorui.framework.mybatis.core.ZtParamEntity<T>
+     * @author :  zhangtao
+     * @createDate :  2021/10/2 上午10:58
+     * @description :
+     * @updateUser :
+     * @updateDate :
+     * @updateRemark :
+     */
     @Override
-    public ZtParamEntity<T> afterInitSimpleWrapper(ZtParamEntity<T> ztParamEntity) {
+    public ZtParamEntity<T> afterUseCommonZtQueryWrapper(ZtParamEntity<T> ztParamEntity, SqlCommandType sqlCommandType) {
+        return ztParamEntity;
+    }
+
+    /**
+     * 预留一个接口，一般用不到
+     *
+     * @param ztParamEntity  :
+     * @param sqlCommandType :
+     * @return :  com.zhangzhuorui.framework.mybatis.core.ZtParamEntity<T>
+     * @author :  zhangtao
+     * @createDate :  2021/10/2 上午11:30
+     * @description :
+     * @updateUser :
+     * @updateDate :
+     * @updateRemark :
+     */
+    @Override
+    public ZtParamEntity<T> afterInitSimpleWrapper(ZtParamEntity<T> ztParamEntity, SqlCommandType sqlCommandType) {
         return ztParamEntity;
     }
 
     @Override
-    public List<T> ztSimpleGetList(T t) {
+    public List<T> ztSimpleGetList(T t) throws Exception {
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<T>();
         ztParamEntity.setEntity(t);
-        try {
-            ztParamEntity = this.ztSimpleSelectProviderWithoutCount(ztParamEntity);
-            List<T> list = this.getList(ztParamEntity);
-            return list;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        ztParamEntity = this.ztSimpleSelectProviderWithoutCount(ztParamEntity);
+        List<T> list = this.getList(ztParamEntity);
+        return list;
+    }
+
+    @Override
+    public T ztSimpleInsert(T t) throws Exception {
+        ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
+        ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok(t));
+        ztParamEntity.setEntity(t);
+        ztParamEntity = getThisService().ztSimpleInsert(ztParamEntity);
+        T obj = getThisService().getObj(ztParamEntity);
+        return obj;
+    }
+
+    @Override
+    public List<T> ztSimpleInsertBatch(List<T> list) throws Exception {
+        ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
+        ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
+        ztParamEntity.setEntityList(list);
+        ztParamEntity = getThisService().ztSimpleInsertBatch(ztParamEntity);
+        List<T> list1 = getThisService().getList(ztParamEntity);
+        return list1;
+    }
+
+    @Override
+    public ZtResBeanEx ztSimpleDelete(T t) throws Exception {
+        ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
+        ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
+        ztParamEntity.setEntity(t);
+        ztParamEntity = getThisService().ztSimpleDeleteByPrimaryKey(ztParamEntity);
+        return ztParamEntity.getZtResBeanEx();
+    }
+
+    @Override
+    public ZtResBeanEx ztSimpleUpdate(T t) throws Exception {
+        ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
+        ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
+        ztParamEntity.setEntity(t);
+        ztParamEntity = getThisService().ztSimpleUpdateByPrimaryKey(ztParamEntity);
+        return ZtResBeanEx.ok();
     }
 
     @Override
     public Integer ztSimpleSelectProviderCount(ZtParamEntity<T> ztParamEntity) {
-        this.initSimpleWrapper(ztParamEntity);
+        this.initSimpleWrapper(ztParamEntity, SqlCommandType.SELECT);
         ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
         ztQueryWrapper.setCount(true);
         return getZtSimpleBaseMapper().ztSimpleSelectProviderCount(ztQueryWrapper);
@@ -494,19 +576,11 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
 
     @Override
     public ZtParamEntity<T> ztBeforeSimpleSelectProvider(ZtParamEntity<T> ztParamEntity) throws Exception {
-        ztParamEntity = this.initSimpleWrapper(ztParamEntity);
+        ztParamEntity = this.initSimpleWrapper(ztParamEntity, SqlCommandType.SELECT);
         return ztParamEntity;
     }
 
-    /**
-     * 只有查询才允许直接调用do方法
-     *
-     * @param ztParamEntity
-     * @return
-     * @throws Exception
-     */
-    @Override
-    public final ZtParamEntity<T> ztDoSimpleSelectProvider(ZtParamEntity<T> ztParamEntity) throws Exception {
+    private final ZtParamEntity<T> ztDoSimpleSelectProvider(ZtParamEntity<T> ztParamEntity) throws Exception {
         ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
         ztParamEntity.setUseCommonZtQueryWrapper(false);
         ZtPage<T> page = new ZtPage<>();
@@ -591,7 +665,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     //region 根据主键查询
     @Override
     public final ZtParamEntity<T> ztSimpleSelectByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception {
-        ztParamEntity = this.initSimpleWrapper(ztParamEntity);
+        ztParamEntity = this.initSimpleWrapper(ztParamEntity, SqlCommandType.SELECT);
         ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
         T t = getZtSimpleBaseMapper().ztSimpleSelectByPrimaryKey(ztQueryWrapper);
         ztParamEntity.getZtResBeanEx().setData(t);
@@ -643,7 +717,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         entity.setGmtUpdate(now);
         entity.setCreatedBy(null);
         entity.setCreatedByName(null);
-        ztParamEntity = this.initSimpleWrapper(ztParamEntity);
+        ztParamEntity = this.initSimpleWrapper(ztParamEntity, SqlCommandType.UPDATE);
         return ztParamEntity;
     }
 
@@ -701,7 +775,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztBeforeSimpleDeleteByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception {
-        ztParamEntity = this.initSimpleWrapper(ztParamEntity);
+        ztParamEntity = this.initSimpleWrapper(ztParamEntity, SqlCommandType.DELETE);
         return ztParamEntity;
     }
 
@@ -759,7 +833,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztBeforeSimpleDeleteByPrimaryKeyBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
-        ztParamEntity = this.initSimpleWrapper(ztParamEntity);
+        ztParamEntity = this.initSimpleWrapper(ztParamEntity, SqlCommandType.DELETE);
         ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
         ztQueryWrapper.setObjList(ztParamEntity.getEntityList());
         return ztParamEntity;
@@ -843,7 +917,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         if (StringUtils.isEmpty(entity.getRemark())) {
             entity.setRemark("");
         }
-        ztParamEntity = this.initSimpleWrapper(ztParamEntity);
+        ztParamEntity = this.initSimpleWrapper(ztParamEntity, SqlCommandType.INSERT);
         return ztParamEntity;
     }
 
@@ -931,7 +1005,8 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
             ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
         }
         if (ztParamEntity.isUseCommonZtQueryWrapper()) {
-            ztParamEntity.setZtQueryWrapper(this.getQueryWrapper(ztParamEntity.getEntityList().get(0), true));
+
+            ztParamEntity.setZtQueryWrapper(this.getQueryWrapper(ztParamEntity.getEntityList().get(0), true, SqlCommandType.INSERT));
             ztParamEntity.getZtQueryWrapper().setObjList(ztParamEntity.getEntityList());
         }
         return ztParamEntity;
