@@ -33,10 +33,14 @@ import java.util.List;
 public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
 
     @Autowired
-    IZtSimpleBaseService<T> service;
+    protected HttpServletRequest request;
+
+    public HttpServletRequest getRequest() {
+        return request;
+    }
 
     @Autowired
-    protected HttpServletRequest request;
+    IZtSimpleBaseService<T> service;
 
     protected IZtSimpleBaseService<T> getIZtSimpleBaseService() {
         return service;

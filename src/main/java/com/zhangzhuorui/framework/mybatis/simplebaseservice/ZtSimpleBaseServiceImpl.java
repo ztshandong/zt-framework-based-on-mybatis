@@ -28,6 +28,7 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 import java.beans.Introspector;
 import java.lang.reflect.Field;
@@ -57,6 +58,13 @@ import java.util.Set;
 public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implements IZtSimpleBaseService<T> {
 
     protected static final Logger log = LoggerFactory.getLogger(ZtSimpleBaseServiceImpl.class);
+
+    @Autowired
+    protected HttpServletRequest request;
+
+    public HttpServletRequest getRequest() {
+        return request;
+    }
 
     @Autowired
     ZtSimpleBaseMapper<T> ztSimpleBaseMapper;
