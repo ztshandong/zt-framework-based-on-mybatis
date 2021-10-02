@@ -434,8 +434,13 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
             conditons.sort(Comparator.comparing(o -> o.getQueryType().getIntValue()));
         }
 
-        ztParamEntity = afternitSimpleWrapper(ztParamEntity);
+        ztParamEntity = afterInitSimpleWrapper(ztParamEntity);
 
+        return ztParamEntity;
+    }
+
+    @Override
+    public ZtParamEntity<T> afterInitSimpleWrapper(ZtParamEntity<T> ztParamEntity) {
         return ztParamEntity;
     }
 

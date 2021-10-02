@@ -88,7 +88,7 @@ public interface IZtSimpleBaseService<T> {
 
     ZtParamEntity<T> initSimpleWrapper(ZtParamEntity<T> ztParamEntity);
 
-    ZtParamEntity<T> afternitSimpleWrapper(ZtParamEntity<T> ztParamEntity);
+    ZtParamEntity<T> afterInitSimpleWrapper(ZtParamEntity<T> ztParamEntity);
 
     T getObj(ZtParamEntity<T> ztParamEntity);
 
