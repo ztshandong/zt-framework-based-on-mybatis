@@ -257,6 +257,9 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
      */
     @Override
     public ZtParamEntity<T> getInitZtParamEntityWithOutCount(T obj) {
+        if (obj.getLimit() == null) {
+            obj.setLimit(Long.valueOf(ZtStrUtils.MAX_PAGE));
+        }
         ZtParamEntity<T> ztParamEntity = getInitZtParamEntity(obj);
         ztParamEntity.setNeedCount(false);
         return ztParamEntity;
@@ -558,6 +561,10 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
 
     @Override
     public final ZtParamEntity<T> ztSimpleSelectProviderWithoutCount(ZtParamEntity<T> ztParamEntity) throws Exception {
+        T entity = ztParamEntity.getEntity();
+        if (entity.getLimit() == null) {
+            entity.setLimit(Long.valueOf(ZtStrUtils.MAX_PAGE));
+        }
         ztParamEntity = this.ztBeforeSimpleSelectProvider(ztParamEntity);
         ztParamEntity.setNeedCount(false);
         ztParamEntity = this.ztDoSimpleSelectProvider(ztParamEntity);
