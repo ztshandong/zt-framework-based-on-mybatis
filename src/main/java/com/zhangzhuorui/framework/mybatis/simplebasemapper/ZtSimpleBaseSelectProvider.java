@@ -182,7 +182,11 @@ public class ZtSimpleBaseSelectProvider {
                     for (int i1 = 0; i1 < list.size(); i1++) {
                         sb1.append("#{" + ZtTableInfoHelperStr.PARAM_NAME + join + ".conditons[").append(i).append("].list[").append(i1).append("]} ,");
                     }
-                    sb1.deleteCharAt(sb1.length() - 1);
+                    if (sb1.length() > 1) {
+                        sb1.deleteCharAt(sb1.length() - 1);
+                    } else {
+                        sb1.append(" NULL AND NOT NULL ");
+                    }
                     sb.append(" ( ").append(sb1.toString()).append(" ) ");
                 } else if (inCondition instanceof ZtQueryWrapper) {
                     ZtQueryWrapper ztQueryWrapper = (ZtQueryWrapper) inCondition;
@@ -247,7 +251,11 @@ public class ZtSimpleBaseSelectProvider {
                         for (int i1 = 0; i1 < innerList.size(); i1++) {
                             innerSb1.append("#{" + ZtTableInfoHelperStr.PARAM_NAME + join + ".ztInnerQueryWrapperList[" + innerIndex + "].ztInnerQueryWrapper" + ".conditons[").append(i).append("].list[").append(i1).append("]} ,");
                         }
-                        innerSb1.deleteCharAt(innerSb1.length() - 1);
+                        if (innerSb1.length() > 1) {
+                            innerSb1.deleteCharAt(innerSb1.length() - 1);
+                        } else {
+                            innerSb1.append(" NULL AND NOT NULL ");
+                        }
                         innerSb.append(" ( ").append(innerSb1.toString()).append(" ) ");
                     } else if (innerInConditon instanceof ZtQueryWrapper) {
                         ZtQueryWrapper ztQueryWrapper = (ZtQueryWrapper) innerInConditon;
