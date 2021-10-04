@@ -3,6 +3,7 @@ package com.zhangzhuorui.framework.mybatis.core;
 import com.zhangzhuorui.framework.core.ZtColumnUtil;
 import com.zhangzhuorui.framework.core.ZtPropertyFunc;
 import com.zhangzhuorui.framework.core.ZtQueryConditionEntity;
+import com.zhangzhuorui.framework.core.ZtQueryInHelper;
 import com.zhangzhuorui.framework.core.ZtQueryTypeEnum;
 import com.zhangzhuorui.framework.core.ZtQueryWrapperEnum;
 import com.zhangzhuorui.framework.core.ZtUtils;
@@ -550,7 +551,7 @@ public class ZtQueryWrapper<T> implements Serializable {
         entity.setQueryWrapper(ztQueryWrapperEnum);
         entity.setQueryType(ztQueryTypeEnum);
 
-        if (firstValue instanceof List || firstValue instanceof ZtQueryWrapper) {
+        if (firstValue instanceof List || firstValue instanceof ZtQueryWrapper || firstValue instanceof ZtQueryInHelper) {
             entity.setList(firstValue);
         }
 

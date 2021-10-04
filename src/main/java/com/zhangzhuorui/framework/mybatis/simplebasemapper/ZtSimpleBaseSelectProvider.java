@@ -1,6 +1,7 @@
 package com.zhangzhuorui.framework.mybatis.simplebasemapper;
 
 import com.zhangzhuorui.framework.core.ZtQueryConditionEntity;
+import com.zhangzhuorui.framework.core.ZtQueryInHelper;
 import com.zhangzhuorui.framework.core.ZtQueryWrapperEnum;
 import com.zhangzhuorui.framework.core.ZtStrUtils;
 import com.zhangzhuorui.framework.mybatis.core.ZtJoinWrapper;
@@ -185,7 +186,7 @@ public class ZtSimpleBaseSelectProvider {
                     if (sb1.length() > 1) {
                         sb1.deleteCharAt(sb1.length() - 1);
                     } else {
-                        sb1.append(" NULL AND NOT NULL ");
+                        sb1.append(ZtStrUtils.FALSE_SQL);
                     }
                     sb.append(" ( ").append(sb1.toString()).append(" ) ");
                 } else if (inCondition instanceof ZtQueryWrapper) {
@@ -195,6 +196,8 @@ public class ZtSimpleBaseSelectProvider {
                     ztQueryWrapper.setSize(null);
                     String whereSql = ztSimpleSelectProvider(ztQueryWrapper);
                     sb.append(" ( ").append(whereSql).append(" ) ");
+                } else if (inCondition instanceof ZtQueryInHelper) {
+                    sb.append(" ( ").append(((ZtQueryInHelper) inCondition).getInSqlStr()).append(" ) ");
                 }
             } else if (conditon.getQueryWrapper().equals(ZtQueryWrapperEnum.BETWEEN) || conditon.getQueryWrapper().equals(ZtQueryWrapperEnum.NOT_BETWEEN)) {
                 sb.append(" #{" + ZtTableInfoHelperStr.PARAM_NAME + join + ".conditons[").append(i).append("].betweenStart}").append(" AND ").append("#{" + ZtTableInfoHelperStr.PARAM_NAME + ".conditons[").append(i).append("].betweenEnd} ");
@@ -254,7 +257,7 @@ public class ZtSimpleBaseSelectProvider {
                         if (innerSb1.length() > 1) {
                             innerSb1.deleteCharAt(innerSb1.length() - 1);
                         } else {
-                            innerSb1.append(" NULL AND NOT NULL ");
+                            innerSb1.append(ZtStrUtils.FALSE_SQL);
                         }
                         innerSb.append(" ( ").append(innerSb1.toString()).append(" ) ");
                     } else if (innerInConditon instanceof ZtQueryWrapper) {
@@ -264,6 +267,8 @@ public class ZtSimpleBaseSelectProvider {
                         ztQueryWrapper.setSize(null);
                         String whereSql = ztSimpleSelectProvider(ztQueryWrapper);
                         innerSb.append(" ( ").append(whereSql).append(" ) ");
+                    } else if (innerInConditon instanceof ZtQueryInHelper) {
+                        innerSb.append(" ( ").append(((ZtQueryInHelper) innerInConditon).getInSqlStr()).append(" ) ");
                     }
                 } else if (innerConditon.getQueryWrapper().equals(ZtQueryWrapperEnum.BETWEEN) || innerConditon.getQueryWrapper().equals(ZtQueryWrapperEnum.NOT_BETWEEN)) {
                     innerSb.append(" #{" + ZtTableInfoHelperStr.PARAM_NAME + join + ".ztInnerQueryWrapperList[" + innerIndex + "].ztInnerQueryWrapper" + ".conditons[").append(i).append("].betweenStart}").append(" AND ").append("#{" + ZtTableInfoHelperStr.PARAM_NAME + ".conditons[").append(i).append("].betweenEnd} ");

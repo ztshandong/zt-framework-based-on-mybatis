@@ -37,7 +37,7 @@ public class ZtJoinWrapper<T> implements Serializable {
     private ZtQueryWrapper ztQueryWrapper;
 
     public ZtJoinWrapper(ZtQueryWrapper ztQueryWrapper) {
-        this(UUID.randomUUID().toString().replace("-", "").substring(0, 5) + "_" + ztQueryWrapper.getTableName(), ztQueryWrapper);
+        this("as" + UUID.randomUUID().toString().replace("-", "").substring(0, 5) + "_" + ztQueryWrapper.getTableName(), ztQueryWrapper);
     }
 
     public ZtJoinWrapper(String tableAliase, ZtQueryWrapper ztQueryWrapper) {
