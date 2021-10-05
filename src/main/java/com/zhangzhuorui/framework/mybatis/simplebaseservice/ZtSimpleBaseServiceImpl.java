@@ -300,7 +300,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         if (!StringUtils.isEmpty(orderByField)) {
             String orderByColumn = getColumnName(orderByField);
             if (!StringUtils.isEmpty(orderByColumn)) {
-                if (obj.getAscFlag()) {
+                if (obj.getAscFlag() == null || obj.getAscFlag()) {
                     wrapper.setOrderBy(" " + orderByColumn + " ASC ");
                 } else {
                     wrapper.setOrderBy(" " + orderByColumn + " DESC ");
