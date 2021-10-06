@@ -9,6 +9,7 @@ import com.zhangzhuorui.framework.mybatis.core.ZtParamEntity;
 import com.zhangzhuorui.framework.mybatis.core.ZtValidList;
 import com.zhangzhuorui.framework.mybatis.simplebaseservice.IZtSimpleBaseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ClassUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.beans.Introspector;
 import java.util.List;
 
 /**
@@ -44,6 +46,13 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
 
     protected IZtSimpleBaseService<T> getIZtSimpleBaseService() {
         return service;
+    }
+
+    protected ZtSimpleBaseController<T> getThisController() {
+        String shortClassName = ClassUtils.getShortName(this.getClass());
+        String beanName = Introspector.decapitalize(shortClassName);
+        Object bean1 = ZtSpringUtil.getBean(beanName);
+        return (ZtSimpleBaseController<T>) bean1;
     }
 
     // @ApiOperation(value = "标准接口：获取所有枚举名。给前端看的，代码中用不到")
@@ -102,9 +111,9 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
         ztParamEntity.setEntity(entity);
-        ztParamEntity = this.beforeSelect(ztParamEntity);
+        ztParamEntity = getThisController().beforeSelect(ztParamEntity);
         ztParamEntity = getIZtSimpleBaseService().ztSimpleSelectProvider(ztParamEntity);
-        ztParamEntity = this.afterSelect(ztParamEntity);
+        ztParamEntity = getThisController().afterSelect(ztParamEntity);
         return ztParamEntity.getZtResBeanEx();
     }
 
@@ -119,9 +128,14 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
         ztParamEntity.setEntity(t);
+        ztParamEntity = getThisController().beforeSelectId(ztParamEntity);
         ztParamEntity = getIZtSimpleBaseService().ztSimpleSelectByPrimaryKey(ztParamEntity);
-        ztParamEntity = this.afterSelectId(ztParamEntity);
+        ztParamEntity = getThisController().afterSelectId(ztParamEntity);
         return ztParamEntity.getZtResBeanEx();
+    }
+
+    private ZtParamEntity<T> beforeSelectId(ZtParamEntity<T> ztParamEntity) {
+        return ztParamEntity;
     }
 
     public ZtParamEntity<T> afterSelectId(ZtParamEntity<T> ztParamEntity) throws Exception {
@@ -129,6 +143,7 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     }
 
     //这个默认不开放，需要的controller自己添加@RequestMapping
+    //如果需要数据权限还要记得添加数据权限注解
     // @Override
     // @RequestMapping(value = ZtStrUtils.SELECT_SIMPLE_ALL, method = RequestMethod.POST)
     // @ResponseBody
@@ -146,18 +161,18 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok(entity));
         ztParamEntity.setEntity(entity);
-        ztParamEntity = this.beforeInsert(ztParamEntity);
+        ztParamEntity = getThisController().beforeInsert(ztParamEntity);
         //controller层判断是否允许新增
         if (ztParamEntity.isCanInsert()) {
             ztParamEntity = getIZtSimpleBaseService().ztSimpleInsert(ztParamEntity);
             //service层还有判断，可能会不允许
             if (ztParamEntity.isCanInsert()) {
-                ztParamEntity = this.afterInsert(ztParamEntity);
+                ztParamEntity = getThisController().afterInsert(ztParamEntity);
             } else {
-                ztParamEntity = this.cannotInsert(ztParamEntity);
+                ztParamEntity = getThisController().cannotInsert(ztParamEntity);
             }
         } else {
-            ztParamEntity = this.cannotInsert(ztParamEntity);
+            ztParamEntity = getThisController().cannotInsert(ztParamEntity);
         }
         return ztParamEntity.getZtResBeanEx();
     }
@@ -170,18 +185,18 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
         ztParamEntity.setEntityList(entityList.getList());
-        ztParamEntity = this.beforeInsertBatch(ztParamEntity);
+        ztParamEntity = getThisController().beforeInsertBatch(ztParamEntity);
         //controller层判断是否允许新增
         if (ztParamEntity.isCanInsert()) {
             ztParamEntity = getIZtSimpleBaseService().ztSimpleInsertBatch(ztParamEntity);
             //service层还有判断，可能会不允许
             if (ztParamEntity.isCanInsert()) {
-                ztParamEntity = this.afterInsertBatch(ztParamEntity);
+                ztParamEntity = getThisController().afterInsertBatch(ztParamEntity);
             } else {
-                ztParamEntity = this.cannotInsertBatch(ztParamEntity);
+                ztParamEntity = getThisController().cannotInsertBatch(ztParamEntity);
             }
         } else {
-            ztParamEntity = this.cannotInsertBatch(ztParamEntity);
+            ztParamEntity = getThisController().cannotInsertBatch(ztParamEntity);
         }
         return ztParamEntity.getZtResBeanEx();
     }
@@ -193,16 +208,16 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok(entity));
         ztParamEntity.setEntity(entity);
-        ztParamEntity = this.beforeUpdate(ztParamEntity);
+        ztParamEntity = getThisController().beforeUpdate(ztParamEntity);
         if (ztParamEntity.isCanUpdate()) {
-            ztParamEntity = this.doUpdate(ztParamEntity);
+            ztParamEntity = getThisController().doUpdate(ztParamEntity);
             if (ztParamEntity.isCanUpdate()) {
-                ztParamEntity = this.afterUpdate(ztParamEntity);
+                ztParamEntity = getThisController().afterUpdate(ztParamEntity);
             } else {
-                ztParamEntity = this.cannotUpdate(ztParamEntity);
+                ztParamEntity = getThisController().cannotUpdate(ztParamEntity);
             }
         } else {
-            ztParamEntity = this.cannotUpdate(ztParamEntity);
+            ztParamEntity = getThisController().cannotUpdate(ztParamEntity);
         }
         return ztParamEntity.getZtResBeanEx();
     }
@@ -214,16 +229,16 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
         ztParamEntity.setEntity(entity);
-        ztParamEntity = this.beforeDelete(ztParamEntity);
+        ztParamEntity = getThisController().beforeDelete(ztParamEntity);
         if (ztParamEntity.isCanDelete()) {
             ztParamEntity = getIZtSimpleBaseService().ztSimpleDeleteByPrimaryKey(ztParamEntity);
             if (ztParamEntity.isCanDelete()) {
-                ztParamEntity = this.afterDelete(ztParamEntity);
+                ztParamEntity = getThisController().afterDelete(ztParamEntity);
             } else {
-                ztParamEntity = this.cannotDelete(ztParamEntity);
+                ztParamEntity = getThisController().cannotDelete(ztParamEntity);
             }
         } else {
-            ztParamEntity = this.cannotDelete(ztParamEntity);
+            ztParamEntity = getThisController().cannotDelete(ztParamEntity);
         }
         return ztParamEntity.getZtResBeanEx();
     }
@@ -235,16 +250,16 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
         ztParamEntity.setEntityList(entityList);
-        ztParamEntity = this.beforeDeleteBatch(ztParamEntity);
+        ztParamEntity = getThisController().beforeDeleteBatch(ztParamEntity);
         if (ztParamEntity.isCanDelete()) {
             ztParamEntity = getIZtSimpleBaseService().ztSimpleDeleteByPrimaryKeyBatch(ztParamEntity);
             if (ztParamEntity.isCanDelete()) {
-                ztParamEntity = this.afterDeleteBatch(ztParamEntity);
+                ztParamEntity = getThisController().afterDeleteBatch(ztParamEntity);
             } else {
-                ztParamEntity = this.cannotDeleteBatch(ztParamEntity);
+                ztParamEntity = getThisController().cannotDeleteBatch(ztParamEntity);
             }
         } else {
-            ztParamEntity = this.cannotDeleteBatch(ztParamEntity);
+            ztParamEntity = getThisController().cannotDeleteBatch(ztParamEntity);
         }
         return ztParamEntity.getZtResBeanEx();
     }
