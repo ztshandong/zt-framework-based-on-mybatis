@@ -180,6 +180,23 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     }
 
     /**
+     * 刷新当前用户相关缓存
+     *
+     * @param userId :
+     * @return :  void
+     * @author :  zhangtao
+     * @createDate :  2021/10/6 下午1:13
+     * @description :
+     * @updateUser :
+     * @updateDate :
+     * @updateRemark :
+     */
+    @Override
+    public void refreshCurUserCache(Long userId) {
+
+    }
+
+    /**
      * @param fieldName :
      * @return :  java.lang.String
      * @author :  zhangtao
