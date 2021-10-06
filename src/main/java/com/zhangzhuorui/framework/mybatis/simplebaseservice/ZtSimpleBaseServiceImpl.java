@@ -192,7 +192,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
      * @updateRemark :
      */
     @Override
-    public void refreshCurUserCache(Long userId) {
+    public void refreshCacheByCurUserId(Long userId) {
 
     }
 

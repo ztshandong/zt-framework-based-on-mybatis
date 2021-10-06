@@ -74,6 +74,13 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
         getIZtSimpleBaseService().refreshCache(cacheName);
     }
 
+    // @ApiOperation(value = "标准接口：刷新当前用户所有相关缓存")
+    @RequestMapping(value = ZtStrUtils.REFRESH_CACHE_BY_CUR_USER_ID, method = RequestMethod.POST)
+    @ResponseBody
+    public void refreshCacheByCurUserId(@RequestBody T userInfo) {
+        getIZtSimpleBaseService().refreshCacheByCurUserId((Long) userInfo.getId());
+    }
+
     protected ZtParamEntity<T> beforeSelect(ZtParamEntity<T> ztParamEntity) {
         return ztParamEntity;
     }

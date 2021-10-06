@@ -116,7 +116,7 @@ public interface IZtSimpleBaseService<T> {
 
     void refreshCache(String cacheName);
 
-    void refreshCurUserCache(Long userId);
+    void refreshCacheByCurUserId(Long userId);
 
     Integer ztSimpleSelectProviderCount(ZtParamEntity<T> ztParamEntity);
 
