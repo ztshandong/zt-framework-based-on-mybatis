@@ -174,22 +174,27 @@ public class ZtQueryWrapper<T> implements Serializable {
      */
     public <T> void addAllColumn(ZtJoinWrapper<T> ztJoinWrapper) {
         String tableNameTmp = this.getTableName();
+        ZtQueryWrapper qw = this;
         List<ResultMapping> resultMappings = ((ResultMap) this.resultMap).getResultMappings();
         if (ztJoinWrapper != null) {
+            qw = ztJoinWrapper.getZtQueryWrapper();
             tableNameTmp = ztJoinWrapper.getTableAliase();
             resultMappings = ((ResultMap) ztJoinWrapper.getZtQueryWrapper().getResultMap()).getResultMappings();
         }
         int size = joinWrapperList.size();
         for (ResultMapping resultMapping : resultMappings) {
-            if (resultMapping.getNestedQueryId() == null && resultMapping.getNestedResultMapId() == null && resultMapping.getColumn() != null) {
-                String columnName = ZtTableInfoHelperStr.getLegalColumnName(resultMapping.getColumn());
-                String s = tableNameTmp + "." + columnName;
-                if (size > 0 && !ZtTableInfoHelperStr.getIllegalNames().contains(resultMapping.getProperty())) {
-                    //联表查询才取别名，因为联表查询结果解析不是用的ResultMap
-                    s = s + " AS " + resultMapping.getProperty();
+            ZtSelectColumnHelper ztSelectColumnHelper = ZtTableInfoHelperStr.calCanSelect(qw, resultMapping);
+            if (ztSelectColumnHelper.getCanSelect()) {
+                if (resultMapping.getNestedQueryId() == null && resultMapping.getNestedResultMapId() == null && resultMapping.getColumn() != null) {
+                    String columnName = ZtTableInfoHelperStr.getLegalColumnName(resultMapping.getColumn());
+                    String s = tableNameTmp + "." + columnName;
+                    if (size > 0 && !ZtTableInfoHelperStr.getIllegalNames().contains(resultMapping.getProperty())) {
+                        //联表查询才取别名，因为联表查询结果解析不是用的ResultMap
+                        s = s + " AS " + resultMapping.getProperty();
+                    }
+                    s = s + ", ";
+                    selectSqlMap.put(tableNameTmp + resultMapping.getColumn(), s);
                 }
-                s = s + ", ";
-                selectSqlMap.put(tableNameTmp + resultMapping.getColumn(), s);
             }
         }
     }
@@ -215,6 +220,7 @@ public class ZtQueryWrapper<T> implements Serializable {
     }
 
     private <T> void addSelectColumn(ZtJoinWrapper<T> ztJoinWrapper, ZtPropertyFunc<T, ?> fieldName, String aliasName) {
+        ZtQueryWrapper qw = this;
         String tableNameTmp = this.getTableName();
         String getFieldName = ZtColumnUtil.getFieldName(fieldName);
         ResultMapping resultMapping = null;
@@ -222,24 +228,28 @@ public class ZtQueryWrapper<T> implements Serializable {
         if (ztJoinWrapper == null) {
             resultMapping = ((ResultMap) this.resultMap).getResultMappings().stream().filter(t -> t.getProperty().equals(getFieldName)).findAny().get();
         } else {
+            qw = ztJoinWrapper.getZtQueryWrapper();
             resultMapping = ((ResultMap) ztJoinWrapper.getZtQueryWrapper().getResultMap()).getResultMappings().stream().filter(t -> t.getProperty().equals(getFieldName)).findAny().get();
             tableNameTmp = ztJoinWrapper.getTableAliase();
         }
 
-        String aliasNameTmp = aliasName;
-        if (StringUtils.isEmpty(aliasNameTmp)) {
-            aliasNameTmp = getFieldName;
-        }
+        ZtSelectColumnHelper ztSelectColumnHelper = ZtTableInfoHelperStr.calCanSelect(qw, resultMapping);
+        if (ztSelectColumnHelper.getCanSelect()) {
+            String aliasNameTmp = aliasName;
+            if (StringUtils.isEmpty(aliasNameTmp)) {
+                aliasNameTmp = getFieldName;
+            }
 
-        String columnName = ZtTableInfoHelperStr.getLegalColumnName(resultMapping.getColumn());
-        String s = tableNameTmp + "." + columnName;
+            String columnName = ZtTableInfoHelperStr.getLegalColumnName(resultMapping.getColumn());
+            String s = tableNameTmp + "." + columnName;
 
-        if (joinWrapperList.size() > 0 && !ZtTableInfoHelperStr.getIllegalNames().contains(aliasNameTmp)) {
-            //联表查询才取别名，因为联表查询结果解析不是用的ResultMap
-            s = s + " AS " + aliasNameTmp;
+            if (joinWrapperList.size() > 0 && !ZtTableInfoHelperStr.getIllegalNames().contains(aliasNameTmp)) {
+                //联表查询才取别名，因为联表查询结果解析不是用的ResultMap
+                s = s + " AS " + aliasNameTmp;
+            }
+            s = s + ", ";
+            selectSqlMap.put(tableNameTmp + resultMapping.getColumn(), s);
         }
-        s = s + ", ";
-        selectSqlMap.put(tableNameTmp + resultMapping.getColumn(), s);
     }
 
     /**

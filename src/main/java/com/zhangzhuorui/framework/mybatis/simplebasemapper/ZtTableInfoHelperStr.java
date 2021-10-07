@@ -1,6 +1,9 @@
 package com.zhangzhuorui.framework.mybatis.simplebasemapper;
 
+import com.zhangzhuorui.framework.core.ZtSpringUtil;
+import com.zhangzhuorui.framework.mybatis.core.IZtSelectColumnService;
 import com.zhangzhuorui.framework.mybatis.core.ZtQueryWrapper;
+import com.zhangzhuorui.framework.mybatis.core.ZtSelectColumnHelper;
 import org.apache.ibatis.mapping.ResultMap;
 import org.apache.ibatis.mapping.ResultMapping;
 import org.springframework.util.StringUtils;
@@ -76,14 +79,17 @@ public class ZtTableInfoHelperStr {
             });
             int size = qw.getJoinWrapperList().size();
             for (ResultMapping resultMapping : collect) {
-                String property = resultMapping.getProperty();
-                String columnName = resultMapping.getColumn();
-                sb.append(qw.getTableName()).append(".").append(ZtTableInfoHelperStr.getLegalColumnName(columnName));
-                if (!ILLEGAL_NAMES.contains(property) && size > 0) {
-                    //联表查询才取别名，因为联表查询结果解析不是用的ResultMap
-                    sb.append(" AS ").append(resultMapping.getProperty());
+                ZtSelectColumnHelper ztSelectColumnHelper = calCanSelect(qw, resultMapping);
+                if (ztSelectColumnHelper.getCanSelect()) {
+                    String property = resultMapping.getProperty();
+                    String columnName = resultMapping.getColumn();
+                    sb.append(qw.getTableName()).append(".").append(ZtTableInfoHelperStr.getLegalColumnName(columnName));
+                    if (!ILLEGAL_NAMES.contains(property) && size > 0) {
+                        //联表查询才取别名，因为联表查询结果解析不是用的ResultMap
+                        sb.append(" AS ").append(resultMapping.getProperty());
+                    }
+                    sb.append(", ");
                 }
-                sb.append(", ");
             }
             sb.deleteCharAt(sb.length() - 2);
             selectSql = sb.toString();
@@ -101,5 +107,17 @@ public class ZtTableInfoHelperStr {
             TABLE_SELECT_SQL_MAP.put(qw.getTableName() + "id", selectByIdSql);
         }
         return selectByIdSql;
+    }
+
+    public static ZtSelectColumnHelper calCanSelect(ZtQueryWrapper qw, ResultMapping resultMapping) {
+        String[] iZtSelectColumnServices = ZtSpringUtil.applicationContext.getBeanNamesForType(IZtSelectColumnService.class);
+        ZtSelectColumnHelper ztSelectColumnHelper = new ZtSelectColumnHelper();
+        ztSelectColumnHelper.setQw(qw);
+        ztSelectColumnHelper.setResultMapping(resultMapping);
+        for (String iZtSelectColumnService : iZtSelectColumnServices) {
+            Object bean = ZtSpringUtil.getBean(iZtSelectColumnService);
+            ztSelectColumnHelper = ((IZtSelectColumnService) bean).calCanSelect(ztSelectColumnHelper);
+        }
+        return ztSelectColumnHelper;
     }
 }
