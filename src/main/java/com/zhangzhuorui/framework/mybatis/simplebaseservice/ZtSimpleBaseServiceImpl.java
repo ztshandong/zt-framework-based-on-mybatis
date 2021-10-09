@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author :  张涛 zhangtao
@@ -91,6 +92,12 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
 
     public DataSource getDataSource() {
         return dataSource;
+    }
+
+    ThreadLocal<AtomicInteger> safeLock = ThreadLocal.withInitial(() -> new AtomicInteger(0));
+
+    public ThreadLocal<AtomicInteger> getSafeLock() {
+        return safeLock;
     }
 
     protected IZtSimpleBaseService<T> getThisService() {
@@ -595,6 +602,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         ztParamEntity = this.ztBeforeSimpleSelectProvider(ztParamEntity);
         ztParamEntity = this.ztDoSimpleSelectProvider(ztParamEntity);
         ztParamEntity = this.ztAfterSimpleSelectProvider(ztParamEntity);
+        getSafeLock().set(new AtomicInteger(0));
         return ztParamEntity;
     }
 
