@@ -96,7 +96,10 @@ public class ZtSimpleBaseSelectProvider {
         }
         if (!qw.isCount()) {
             if (null != qw.getOrderBy()) {
-                fromWhereStr.append(" ORDER BY ").append(qw.getOrderBy());
+                fromWhereStr.append(" ORDER BY ").append(qw.getTableName()).append(".").append(qw.getOrderBy());
+            } else {
+                ResultMapping idResultMapping = ((ResultMap) qw.getResultMap()).getIdResultMappings().get(0);
+                fromWhereStr.append(" ORDER BY ").append(qw.getTableName()).append(".").append(idResultMapping.getColumn());
             }
             if (null != qw.getCurrent() && null != qw.getSize()) {
                 if (qw.getCurrent().compareTo(1L) < 0) {
