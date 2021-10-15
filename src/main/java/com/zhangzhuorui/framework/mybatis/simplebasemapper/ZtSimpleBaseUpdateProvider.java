@@ -46,12 +46,21 @@ public class ZtSimpleBaseUpdateProvider {
                 Object obj = qw.getObj();
                 Field versionField = ZtUtils.getField(obj, versionFieldName);
                 versionField.setAccessible(true);
-                Long versionPlus = (Long) versionField.get(obj);
-                if (versionPlus == null) {
-                    versionPlus = 1L;
+                if (versionField.getType().equals(Integer.class) || versionField.getType().equals(int.class)) {
+                    Integer versionPlus = (Integer) versionField.get(obj);
+                    if (versionPlus == null) {
+                        versionPlus = 1;
+                    }
+                    versionPlus = versionPlus + 1;
+                    setStr.append(ZtTableInfoHelperStr.getLegalColumnName(versionColumnName)).append(" = " + versionPlus + ", ");
+                } else if (versionField.getType().equals(Long.class) || versionField.getType().equals(long.class)) {
+                    Long versionPlus = (Long) versionField.get(obj);
+                    if (versionPlus == null) {
+                        versionPlus = 1L;
+                    }
+                    versionPlus = versionPlus + 1;
+                    setStr.append(ZtTableInfoHelperStr.getLegalColumnName(versionColumnName)).append(" = " + versionPlus + ", ");
                 }
-                versionPlus = versionPlus + 1;
-                setStr.append(ZtTableInfoHelperStr.getLegalColumnName(versionColumnName)).append(" = " + versionPlus + ", ");
             } else {
                 if (conditon.getUpdateFieldUseNativeSql()) {
                     setStr.append(ZtTableInfoHelperStr.getLegalColumnName(columnName)).append(" = " + conditon.getUpdateFieldNativeSql() + ", ");

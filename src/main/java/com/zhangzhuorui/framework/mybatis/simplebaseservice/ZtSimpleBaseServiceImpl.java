@@ -937,7 +937,11 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         if (!StringUtils.isEmpty(getVersionFieldName())) {
             Field versionField = ZtUtils.getField(entity, getVersionFieldName());
             versionField.setAccessible(true);
-            versionField.set(entity, 1L);
+            if (versionField.getType().equals(Integer.class) || versionField.getType().equals(int.class)) {
+                versionField.set(entity, 1);
+            } else if (versionField.getType().equals(Long.class) || versionField.getType().equals(long.class)) {
+                versionField.set(entity, 1L);
+            }
         }
 
         if (!StringUtils.isEmpty(getLogicDeleteFieldName())) {
@@ -1017,7 +1021,11 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
             if (!StringUtils.isEmpty(getVersionFieldName())) {
                 Field versionField = ZtUtils.getField(entity, getVersionFieldName());
                 versionField.setAccessible(true);
-                versionField.set(entity, 1L);
+                if (versionField.getType().equals(Integer.class) || versionField.getType().equals(int.class)) {
+                    versionField.set(entity, 1);
+                } else if (versionField.getType().equals(Long.class) || versionField.getType().equals(long.class)) {
+                    versionField.set(entity, 1L);
+                }
             }
 
             if (!StringUtils.isEmpty(getLogicDeleteFieldName())) {
