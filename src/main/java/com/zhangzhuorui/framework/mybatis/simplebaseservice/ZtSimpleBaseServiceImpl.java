@@ -312,33 +312,36 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         wrapper.setLogicDeleteFlag(getLogicDeleteFlag());
         wrapper.setManualId(getManualId());
         wrapper.setResultMap(getResultMap());
-        wrapper.setCurrent(Long.valueOf(ZtStrUtils.START));
-        wrapper.setSize(Long.valueOf(ZtStrUtils.LIMIT));
-        if (obj.getLimit() != null) {
-            wrapper.setSize(obj.getLimit());
-        }
-        if (obj.getStart() != null) {
-            wrapper.setCurrent(obj.getStart());
-        }
-        String orderByField = obj.getOrderBy();
-        if (!StringUtils.isEmpty(orderByField)) {
-            String orderByColumn = getColumnName(orderByField);
-            if (!StringUtils.isEmpty(orderByColumn)) {
-                if (obj.getAscFlag() == null || obj.getAscFlag()) {
-                    wrapper.setOrderBy(" " + orderByColumn + " ASC ");
-                } else {
-                    wrapper.setOrderBy(" " + orderByColumn + " DESC ");
+
+        if (sqlCommandType.equals(SqlCommandType.SELECT)) {
+            wrapper.setCurrent(Long.valueOf(ZtStrUtils.START));
+            wrapper.setSize(Long.valueOf(ZtStrUtils.LIMIT));
+            if (obj.getLimit() != null) {
+                wrapper.setSize(obj.getLimit());
+            }
+            if (obj.getStart() != null) {
+                wrapper.setCurrent(obj.getStart());
+            }
+            String orderByField = obj.getOrderBy();
+            if (!StringUtils.isEmpty(orderByField)) {
+                String orderByColumn = getColumnName(orderByField);
+                if (!StringUtils.isEmpty(orderByColumn)) {
+                    if (obj.getAscFlag() == null || obj.getAscFlag()) {
+                        wrapper.setOrderBy(" " + orderByColumn + " ASC ");
+                    } else {
+                        wrapper.setOrderBy(" " + orderByColumn + " DESC ");
+                    }
                 }
             }
-        }
 
-        if (!StringUtils.isEmpty(logicDeleteFieldName)) {
-            Field field = ZtUtils.getField(obj, logicDeleteFieldName);
-            field.setAccessible(true);
-            try {
-                field.set(obj, !getLogicDeleteFlag());
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+            if (!StringUtils.isEmpty(logicDeleteFieldName)) {
+                Field field = ZtUtils.getField(obj, logicDeleteFieldName);
+                field.setAccessible(true);
+                try {
+                    field.set(obj, !getLogicDeleteFlag());
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -450,37 +453,41 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
                 }
                 ztParamEntity.setZtQueryWrapper(this.getQueryWrapper(ztParamEntity.getEntity(), false, sqlCommandType));
             }
-            T entity = ztParamEntity.getEntity();
-            if (entity != null) {
-                Date startDate = entity.getStartDate();
-                Date endDate = entity.getEndDate();
-                Date startTime = entity.getStartTime();
-                Date endTime = entity.getEndTime();
 
-                Date start = null, end = null;
-                if (startDate != null) {
-                    start = ZtUtils.getEarliestTimeOfTheDay(startDate);
-                }
-                if (startTime != null) {
-                    start = startTime;
-                }
-                if (endDate != null) {
-                    end = ZtUtils.getLatestTimeOfTheDay(endDate);
-                }
-                if (endTime != null) {
-                    end = endTime;
-                }
+            if (sqlCommandType.equals(SqlCommandType.SELECT)) {
+                T entity = ztParamEntity.getEntity();
+                if (entity != null) {
+                    Date startDate = entity.getStartDate();
+                    Date endDate = entity.getEndDate();
+                    Date startTime = entity.getStartTime();
+                    Date endTime = entity.getEndTime();
 
-                if (start != null && end != null) {
-                    ztParamEntity.getZtQueryWrapper().andBetween(ZtBasicEntity::getGmtCreate, start, end);
-                } else if (start != null) {
-                    entity.setGmtCreate(start);
-                    ztParamEntity.getZtQueryWrapper().andGreatEquals(ZtBasicEntity::getGmtCreate);
-                } else if (end != null) {
-                    entity.setGmtCreate(end);
-                    ztParamEntity.getZtQueryWrapper().andLessEquals(ZtBasicEntity::getGmtCreate);
+                    Date start = null, end = null;
+                    if (startDate != null) {
+                        start = ZtUtils.getEarliestTimeOfTheDay(startDate);
+                    }
+                    if (startTime != null) {
+                        start = startTime;
+                    }
+                    if (endDate != null) {
+                        end = ZtUtils.getLatestTimeOfTheDay(endDate);
+                    }
+                    if (endTime != null) {
+                        end = endTime;
+                    }
+
+                    if (start != null && end != null) {
+                        ztParamEntity.getZtQueryWrapper().andBetween(ZtBasicEntity::getGmtCreate, start, end);
+                    } else if (start != null) {
+                        entity.setGmtCreate(start);
+                        ztParamEntity.getZtQueryWrapper().andGreatEquals(ZtBasicEntity::getGmtCreate);
+                    } else if (end != null) {
+                        entity.setGmtCreate(end);
+                        ztParamEntity.getZtQueryWrapper().andLessEquals(ZtBasicEntity::getGmtCreate);
+                    }
                 }
             }
+
             //这个在UseCommonZtQueryWrapper里面，只有UseCommonZtQueryWrapper才会进入
             ztParamEntity = afterUseCommonZtQueryWrapper(ztParamEntity, sqlCommandType);
         }
