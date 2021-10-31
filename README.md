@@ -4,7 +4,7 @@
 ### ```好的开发，不治脱发，而是防止脱发```
 #
 ### 卓越超凡，睿智通达
-![](https://ztshandong.oss-cn-shanghai.aliyuncs.com/kid/login-background.jpg)
+[![](https://ztshandong.oss-cn-shanghai.aliyuncs.com/kid/login-background.jpg)](https://v.youku.com/v_show/id_XMjc0NzcxODkyNA==.html?spm=a2h3j.8428770.3416059.1)
 
 # 项目开发首选，我要打十个
 * ## 基于Mybatis的各种Provider实现各种功能，对原有架构零侵入，不添加任何依赖，仍然支持原有功能
@@ -73,6 +73,9 @@ public class ZtFrameUse1Controller extends ZtSimpleBaseController<ZtFrameUse1> {
  <resultMap id="BaseResultMap" type="com.zhangzhuorui.framework.mybatis.ZtFrameUse1"
 extends="com.zhangzhuorui.framework.mybatis.simplebasemapper.ZtBaseResultMapMapper.ZtBaseLongIdResultMap">
 ```
+#
+# [权限管理系统(后台+前端+移动端)gitee](https://gitee.com/ztshandong/zt-rbac-system)
+# [权限管理系统(后台+前端+移动端)github](https://github.com/ztshandong/zt-rbac-system)
 #
 # [打个招呼](https://ztshandong.github.io/)
 # ```水平有限，也恳请各路大神指点```
