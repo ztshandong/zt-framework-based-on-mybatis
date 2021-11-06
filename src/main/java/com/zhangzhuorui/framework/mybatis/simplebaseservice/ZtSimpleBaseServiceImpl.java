@@ -157,6 +157,22 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     }
 
     /**
+     * 批量保存默认数据条数
+     *
+     * @param :
+     * @return :  int
+     * @author :  zhangtao
+     * @createDate :  2017-01-01
+     * @description :
+     * @updateUser :
+     * @updateDate :
+     * @updateRemark :
+     */
+    protected int getBatchSize() {
+        return 1000;
+    }
+
+    /**
      * @param :
      * @return :  void
      * @author :  zhangtao
@@ -477,13 +493,19 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
                     }
 
                     if (start != null && end != null) {
-                        ztParamEntity.getZtQueryWrapper().andBetween(ZtBasicEntity::getGmtCreate, start, end);
+                        if (getTimeScopeField() != null) {
+                            ztParamEntity.getZtQueryWrapper().andBetween(getTimeScopeField(), start, end);
+                        }
                     } else if (start != null) {
                         entity.setGmtCreate(start);
-                        ztParamEntity.getZtQueryWrapper().andGreatEquals(ZtBasicEntity::getGmtCreate);
+                        if (getTimeScopeField() != null) {
+                            ztParamEntity.getZtQueryWrapper().andGreatEquals(getTimeScopeField());
+                        }
                     } else if (end != null) {
                         entity.setGmtCreate(end);
-                        ztParamEntity.getZtQueryWrapper().andLessEquals(ZtBasicEntity::getGmtCreate);
+                        if (getTimeScopeField() != null) {
+                            ztParamEntity.getZtQueryWrapper().andLessEquals(getTimeScopeField());
+                        }
                     }
                 }
             }
@@ -497,6 +519,11 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         conditons.sort(Comparator.comparing(o -> o.getQueryType().getIntValue()));
 
         return ztParamEntity;
+    }
+
+    @Override
+    public ZtPropertyFunc<T, ?> getTimeScopeField() {
+        return ZtBasicEntity::getGmtCreate;
     }
 
     /**
@@ -999,9 +1026,24 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         if (ztParamEntity.isCanInsert()) {
             // ztParamEntity = getThisService().ztDoSimpleInsertBatch(ztParamEntity);
             ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
-            Integer integer = getZtSimpleBaseMapper().ztSimpleInsertBatch(ztParamEntity.getEntityList(), ztQueryWrapper);
-            ztParamEntity.setInsertRow(integer);
-            if (integer > 0) {
+            // Integer integer = getZtSimpleBaseMapper().ztSimpleInsertBatch(ztParamEntity.getEntityList(), ztQueryWrapper);
+
+            int batchSize = this.getBatchSize();
+            int i = ztParamEntity.getEntityList().size();
+            List<T> tmp = new LinkedList<>();
+            for (int itmp = 0; itmp < i; itmp++) {
+                tmp.add(ztParamEntity.getEntityList().get(itmp));
+                if ((itmp + 1) % batchSize == 0) {
+                    getZtSimpleBaseMapper().ztSimpleInsertBatch(tmp, ztQueryWrapper);
+                    tmp.clear();
+                }
+            }
+            if (tmp.size() > 0) {
+                getZtSimpleBaseMapper().ztSimpleInsertBatch(tmp, ztQueryWrapper);
+            }
+
+            ztParamEntity.setInsertRow(i);
+            if (i > 0) {
                 ztParamEntity.setInsertRes(true);
             }
             if (ztParamEntity.isCanInsert() && ztParamEntity.isInsertRes()) {

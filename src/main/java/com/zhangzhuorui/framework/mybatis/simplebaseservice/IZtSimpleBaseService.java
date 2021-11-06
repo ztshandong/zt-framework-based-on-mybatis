@@ -30,6 +30,8 @@ public interface IZtSimpleBaseService<T> {
 
     ZtParamEntity<T> initSimpleWrapper(ZtParamEntity<T> ztParamEntity, SqlCommandType sqlCommandType);
 
+    ZtPropertyFunc<T, ?> getTimeScopeField();
+
     ZtParamEntity<T> afterUseCommonZtQueryWrapper(ZtParamEntity<T> ztParamEntity, SqlCommandType sqlCommandType);
 
     ZtParamEntity<T> afterInitSimpleWrapper(ZtParamEntity<T> ztParamEntity, SqlCommandType sqlCommandType);
