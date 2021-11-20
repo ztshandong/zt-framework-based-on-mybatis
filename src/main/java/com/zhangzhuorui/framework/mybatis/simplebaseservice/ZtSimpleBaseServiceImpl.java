@@ -64,6 +64,10 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Autowired
     ZtResBeanExConfig ztResBeanExConfig;
 
+    public ZtResBeanExConfig getZtResBeanExConfig() {
+        return ztResBeanExConfig;
+    }
+
     @Autowired
     protected HttpServletRequest request;
 
@@ -301,7 +305,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     public ZtParamEntity<T> getInitZtParamEntityWithOutCount(T obj) {
         if (obj.getLimit() == null) {
-            obj.setLimit(Long.valueOf(ztResBeanExConfig.getMaxPage()));
+            obj.setLimit(Long.valueOf(getZtResBeanExConfig().getMaxPage()));
         }
         ZtParamEntity<T> ztParamEntity = getInitZtParamEntity(obj);
         ztParamEntity.setNeedCount(false);
@@ -334,8 +338,8 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         wrapper.setResultMap(getResultMap());
 
         if (sqlCommandType.equals(SqlCommandType.SELECT)) {
-            wrapper.setCurrent(Long.valueOf(ztResBeanExConfig.getStart()));
-            wrapper.setSize(Long.valueOf(ztResBeanExConfig.getLimit()));
+            wrapper.setCurrent(Long.valueOf(getZtResBeanExConfig().getStart()));
+            wrapper.setSize(Long.valueOf(getZtResBeanExConfig().getLimit()));
             if (obj.getLimit() != null) {
                 wrapper.setSize(obj.getLimit());
             }
@@ -464,7 +468,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
                 //默认全表查询 ztSimpleSelectAll
                 try {
                     T obj = (T) this.getResultMap().getType().newInstance();
-                    obj.setLimit(Long.valueOf(ztResBeanExConfig.getMaxPage()));
+                    obj.setLimit(Long.valueOf(getZtResBeanExConfig().getMaxPage()));
                     ztParamEntity.setEntity(obj);
                 } catch (InstantiationException e) {
                     e.printStackTrace();
@@ -629,7 +633,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     public final ZtParamEntity<T> ztSimpleSelectProviderWithoutCount(ZtParamEntity<T> ztParamEntity) throws Exception {
         T entity = ztParamEntity.getEntity();
         if (entity.getLimit() == null) {
-            entity.setLimit(Long.valueOf(ztResBeanExConfig.getMaxPage()));
+            entity.setLimit(Long.valueOf(getZtResBeanExConfig().getMaxPage()));
         }
         ztParamEntity = this.ztBeforeSimpleSelectProvider(ztParamEntity);
         ztParamEntity.setNeedCount(false);
@@ -816,8 +820,8 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztCannotSimpleUpdateByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception {
-        ztParamEntity.getZtResBeanEx().setCode(ztResBeanExConfig.getFailCode());
-        ztParamEntity.getZtResBeanEx().setMsg(ztResBeanExConfig.getFailMsg());
+        ztParamEntity.getZtResBeanEx().setCode(getZtResBeanExConfig().getFailCode());
+        ztParamEntity.getZtResBeanEx().setMsg(getZtResBeanExConfig().getFailMsg());
         return ztParamEntity;
     }
     //endregion
@@ -880,8 +884,8 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztCannotSimpleUpdateByParam(ZtParamEntity<T> ztParamEntity) throws Exception {
-        ztParamEntity.getZtResBeanEx().setCode(ztResBeanExConfig.getFailCode());
-        ztParamEntity.getZtResBeanEx().setMsg(ztResBeanExConfig.getFailMsg());
+        ztParamEntity.getZtResBeanEx().setCode(getZtResBeanExConfig().getFailCode());
+        ztParamEntity.getZtResBeanEx().setMsg(getZtResBeanExConfig().getFailMsg());
         return ztParamEntity;
     }
     //endregion
@@ -938,8 +942,8 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztCannotSimpleDeleteByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception {
-        ztParamEntity.getZtResBeanEx().setCode(ztResBeanExConfig.getFailCode());
-        ztParamEntity.getZtResBeanEx().setMsg(ztResBeanExConfig.getFailMsg());
+        ztParamEntity.getZtResBeanEx().setCode(getZtResBeanExConfig().getFailCode());
+        ztParamEntity.getZtResBeanEx().setMsg(getZtResBeanExConfig().getFailMsg());
         return ztParamEntity;
     }
     //endregion
@@ -998,8 +1002,8 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztCannotSimpleDeleteByPrimaryKeyBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
-        ztParamEntity.getZtResBeanEx().setCode(ztResBeanExConfig.getFailCode());
-        ztParamEntity.getZtResBeanEx().setMsg(ztResBeanExConfig.getFailMsg());
+        ztParamEntity.getZtResBeanEx().setCode(getZtResBeanExConfig().getFailCode());
+        ztParamEntity.getZtResBeanEx().setMsg(getZtResBeanExConfig().getFailMsg());
         return ztParamEntity;
     }
     //endregion
@@ -1084,8 +1088,8 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztCannotSimpleInsert(ZtParamEntity<T> ztParamEntity) throws Exception {
-        ztParamEntity.getZtResBeanEx().setCode(ztResBeanExConfig.getFailCode());
-        ztParamEntity.getZtResBeanEx().setMsg(ztResBeanExConfig.getFailMsg());
+        ztParamEntity.getZtResBeanEx().setCode(getZtResBeanExConfig().getFailCode());
+        ztParamEntity.getZtResBeanEx().setMsg(getZtResBeanExConfig().getFailMsg());
         return ztParamEntity;
     }
     //endregion
@@ -1194,8 +1198,8 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztCannotSimpleInsertBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
-        ztParamEntity.getZtResBeanEx().setCode(ztResBeanExConfig.getFailCode());
-        ztParamEntity.getZtResBeanEx().setMsg(ztResBeanExConfig.getFailMsg());
+        ztParamEntity.getZtResBeanEx().setCode(getZtResBeanExConfig().getFailCode());
+        ztParamEntity.getZtResBeanEx().setMsg(getZtResBeanExConfig().getFailMsg());
         return ztParamEntity;
     }
     //endregion

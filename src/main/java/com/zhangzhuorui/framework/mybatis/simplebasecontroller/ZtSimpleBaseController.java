@@ -38,6 +38,10 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     @Autowired
     ZtResBeanExConfig ztResBeanExConfig;
 
+    public ZtResBeanExConfig getZtResBeanExConfig() {
+        return ztResBeanExConfig;
+    }
+
     @Autowired
     protected HttpServletRequest request;
 
@@ -46,10 +50,10 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     }
 
     @Autowired
-    IZtSimpleBaseService<T> service;
+    IZtSimpleBaseService<T> iZtSimpleBaseService;
 
     protected IZtSimpleBaseService<T> getIZtSimpleBaseService() {
-        return service;
+        return iZtSimpleBaseService;
     }
 
     protected ZtSimpleBaseController<T> getThisController() {
@@ -106,10 +110,10 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     ) throws Exception {
         if (entity != null) {
             if (entity.getStart() == null) {
-                entity.setStart(Long.valueOf(ztResBeanExConfig.getStart()));
+                entity.setStart(Long.valueOf(getZtResBeanExConfig().getStart()));
             }
             if (entity.getLimit() == null) {
-                entity.setLimit(Long.valueOf(ztResBeanExConfig.getLimit()));
+                entity.setLimit(Long.valueOf(getZtResBeanExConfig().getLimit()));
             }
         }
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
@@ -277,8 +281,8 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     }
 
     protected ZtParamEntity<T> cannotInsert(ZtParamEntity<T> ztParamEntity) {
-        ztParamEntity.getZtResBeanEx().setCode(ztResBeanExConfig.getFailCode());
-        ztParamEntity.getZtResBeanEx().setMsg(ztResBeanExConfig.getFailMsg());
+        ztParamEntity.getZtResBeanEx().setCode(getZtResBeanExConfig().getFailCode());
+        ztParamEntity.getZtResBeanEx().setMsg(getZtResBeanExConfig().getFailMsg());
         return ztParamEntity;
     }
 
@@ -295,8 +299,8 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     }
 
     protected ZtParamEntity<T> cannotUpdate(ZtParamEntity<T> ztParamEntity) {
-        ztParamEntity.getZtResBeanEx().setCode(ztResBeanExConfig.getFailCode());
-        ztParamEntity.getZtResBeanEx().setMsg(ztResBeanExConfig.getFailMsg());
+        ztParamEntity.getZtResBeanEx().setCode(getZtResBeanExConfig().getFailCode());
+        ztParamEntity.getZtResBeanEx().setMsg(getZtResBeanExConfig().getFailMsg());
         return ztParamEntity;
     }
 
@@ -309,8 +313,8 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     }
 
     protected ZtParamEntity<T> cannotDelete(ZtParamEntity<T> ztParamEntity) {
-        ztParamEntity.getZtResBeanEx().setCode(ztResBeanExConfig.getFailCode());
-        ztParamEntity.getZtResBeanEx().setMsg(ztResBeanExConfig.getFailMsg());
+        ztParamEntity.getZtResBeanEx().setCode(getZtResBeanExConfig().getFailCode());
+        ztParamEntity.getZtResBeanEx().setMsg(getZtResBeanExConfig().getFailMsg());
         return ztParamEntity;
     }
 
@@ -323,8 +327,8 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     }
 
     protected ZtParamEntity<T> cannotInsertBatch(ZtParamEntity<T> ztParamEntity) {
-        ztParamEntity.getZtResBeanEx().setCode(ztResBeanExConfig.getFailCode());
-        ztParamEntity.getZtResBeanEx().setMsg(ztResBeanExConfig.getFailMsg());
+        ztParamEntity.getZtResBeanEx().setCode(getZtResBeanExConfig().getFailCode());
+        ztParamEntity.getZtResBeanEx().setMsg(getZtResBeanExConfig().getFailMsg());
         return ztParamEntity;
     }
 
@@ -337,8 +341,8 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     }
 
     protected ZtParamEntity<T> cannotDeleteBatch(ZtParamEntity<T> ztParamEntity) {
-        ztParamEntity.getZtResBeanEx().setCode(ztResBeanExConfig.getFailCode());
-        ztParamEntity.getZtResBeanEx().setMsg(ztResBeanExConfig.getFailMsg());
+        ztParamEntity.getZtResBeanEx().setCode(getZtResBeanExConfig().getFailCode());
+        ztParamEntity.getZtResBeanEx().setMsg(getZtResBeanExConfig().getFailMsg());
         return ztParamEntity;
     }
 
