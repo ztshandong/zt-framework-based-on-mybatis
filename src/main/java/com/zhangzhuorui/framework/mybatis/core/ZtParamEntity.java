@@ -64,6 +64,27 @@ public class ZtParamEntity<T> implements Serializable {
     //join返回的dto
     private Class dtoClass;
 
+    //条件更新的目标值
+    private T destEntity;
+    //条件更新的目标值wrapper 用于生成SQL中的SET语句
+    private ZtQueryWrapper<T> destQueryWrapper;
+
+    public T getDestEntity() {
+        return destEntity;
+    }
+
+    public void setDestEntity(T destEntity) {
+        this.destEntity = destEntity;
+    }
+
+    public ZtQueryWrapper<T> getDestQueryWrapper() {
+        return destQueryWrapper;
+    }
+
+    public void setDestQueryWrapper(ZtQueryWrapper<T> destQueryWrapper) {
+        this.destQueryWrapper = destQueryWrapper;
+    }
+
     public Class getDtoClass() {
         return dtoClass;
     }

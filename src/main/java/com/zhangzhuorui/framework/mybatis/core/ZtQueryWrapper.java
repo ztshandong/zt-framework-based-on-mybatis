@@ -32,6 +32,9 @@ import java.util.TreeMap;
  */
 public class ZtQueryWrapper<T> implements Serializable {
 
+    //用户唯一标识。生成SELECT SQL缓存时配合tableName使用
+    private String unionInfo;
+
     //新增时是否需要手动插入id，默认使用数据库自增id
     private boolean manualId;
 
@@ -286,6 +289,14 @@ public class ZtQueryWrapper<T> implements Serializable {
         selectSqlBuiler.deleteCharAt(selectSqlBuiler.length() - 2);
         this.selectColumn = selectSqlBuiler.toString();
         selectSqlMap.clear();
+    }
+
+    public String getUnionInfo() {
+        return unionInfo;
+    }
+
+    public void setUnionInfo(String unionInfo) {
+        this.unionInfo = unionInfo;
     }
 
     public boolean isManualId() {
@@ -556,6 +567,8 @@ public class ZtQueryWrapper<T> implements Serializable {
             entity = any.get();
         } else {
             entity.setFieldName(fieldName);
+            String columnName = getColumnName(null, func);
+            entity.setColumnName(columnName);
             conditons.add(entity);
         }
         entity.setQueryWrapper(ztQueryWrapperEnum);

@@ -28,6 +28,8 @@ public interface IZtSimpleBaseService<T> {
 
     ZtParamEntity<T> getInitZtParamEntityWithOutCount(T obj);
 
+    String getUnionInfo(IZtSimpleBaseService<T> thisService);
+
     ZtParamEntity<T> initSimpleWrapper(ZtParamEntity<T> ztParamEntity, SqlCommandType sqlCommandType);
 
     ZtPropertyFunc<T, ?> getTimeScopeField();
@@ -164,7 +166,7 @@ public interface IZtSimpleBaseService<T> {
     ZtParamEntity<T> ztAfterSimpleSelectByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception;
 
     /**
-     * 动态更新，只更不为null的字段。注意：""也不为null
+     * 根据主键动态更新单条数据，只更不为null的字段。注意：""也不为null
      *
      * @param ztParamEntity
      * @return
@@ -178,6 +180,22 @@ public interface IZtSimpleBaseService<T> {
     ZtParamEntity<T> ztAfterSimpleUpdateByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception;
 
     ZtParamEntity<T> ztCannotSimpleUpdateByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception;
+
+    /**
+     * 根据条件批量动态更新，只更不为null的字段。注意：""也不为null
+     *
+     * @param ztParamEntity
+     * @return
+     */
+    ZtParamEntity<T> ztSimpleUpdateByParam(ZtParamEntity<T> ztParamEntity) throws Exception;
+
+    ZtParamEntity<T> ztBeforeSimpleUpdateByParam(ZtParamEntity<T> ztParamEntity) throws Exception;
+
+    // ZtParamEntity<T> ztDoSimpleUpdateByParam(ZtParamEntity<T> ztParamEntity) throws Exception;
+
+    ZtParamEntity<T> ztAfterSimpleUpdateByParam(ZtParamEntity<T> ztParamEntity) throws Exception;
+
+    ZtParamEntity<T> ztCannotSimpleUpdateByParam(ZtParamEntity<T> ztParamEntity) throws Exception;
 
     /**
      * 根据主键删除

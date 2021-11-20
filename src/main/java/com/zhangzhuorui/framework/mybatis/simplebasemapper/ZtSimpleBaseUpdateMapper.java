@@ -23,4 +23,11 @@ public interface ZtSimpleBaseUpdateMapper<T extends ZtBasicEntity> extends Seria
             method = "ztSimpleUpdateByPrimaryKey"
     )
     Integer ztSimpleUpdateByPrimaryKey(@Param(ZtTableInfoHelperStr.PARAM_NAME) ZtQueryWrapper qw);
+
+    @UpdateProvider(
+            type = ZtSimpleBaseUpdateProvider.class,
+            method = "ztSimpleUpdateByParam"
+    )
+    Integer ztSimpleUpdateByParam(@Param("dest") ZtQueryWrapper dest, @Param(ZtTableInfoHelperStr.PARAM_NAME) ZtQueryWrapper qw);
+
 }

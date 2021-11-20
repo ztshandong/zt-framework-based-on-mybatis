@@ -3,6 +3,7 @@ package com.zhangzhuorui.framework.mybatis.simplebasecontroller;
 import com.zhangzhuorui.framework.core.ZtBasicEntity;
 import com.zhangzhuorui.framework.core.ZtPage;
 import com.zhangzhuorui.framework.core.ZtResBeanEx;
+import com.zhangzhuorui.framework.core.ZtResBeanExConfig;
 import com.zhangzhuorui.framework.core.ZtSpringUtil;
 import com.zhangzhuorui.framework.core.ZtStrUtils;
 import com.zhangzhuorui.framework.mybatis.core.ZtParamEntity;
@@ -33,6 +34,9 @@ import java.util.List;
  */
 @Validated
 public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
+
+    @Autowired
+    ZtResBeanExConfig ztResBeanExConfig;
 
     @Autowired
     protected HttpServletRequest request;
@@ -102,10 +106,10 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     ) throws Exception {
         if (entity != null) {
             if (entity.getStart() == null) {
-                entity.setStart(Long.valueOf(ZtStrUtils.START));
+                entity.setStart(Long.valueOf(ztResBeanExConfig.getStart()));
             }
             if (entity.getLimit() == null) {
-                entity.setLimit(Long.valueOf(ZtStrUtils.LIMIT));
+                entity.setLimit(Long.valueOf(ztResBeanExConfig.getLimit()));
             }
         }
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
@@ -273,8 +277,8 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     }
 
     protected ZtParamEntity<T> cannotInsert(ZtParamEntity<T> ztParamEntity) {
-        ztParamEntity.getZtResBeanEx().setCode(ZtStrUtils.FAIL_CODE);
-        ztParamEntity.getZtResBeanEx().setMsg(ZtStrUtils.FAIL_MSG);
+        ztParamEntity.getZtResBeanEx().setCode(ztResBeanExConfig.getFailCode());
+        ztParamEntity.getZtResBeanEx().setMsg(ztResBeanExConfig.getFailMsg());
         return ztParamEntity;
     }
 
@@ -291,8 +295,8 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     }
 
     protected ZtParamEntity<T> cannotUpdate(ZtParamEntity<T> ztParamEntity) {
-        ztParamEntity.getZtResBeanEx().setCode(ZtStrUtils.FAIL_CODE);
-        ztParamEntity.getZtResBeanEx().setMsg(ZtStrUtils.FAIL_MSG);
+        ztParamEntity.getZtResBeanEx().setCode(ztResBeanExConfig.getFailCode());
+        ztParamEntity.getZtResBeanEx().setMsg(ztResBeanExConfig.getFailMsg());
         return ztParamEntity;
     }
 
@@ -305,8 +309,8 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     }
 
     protected ZtParamEntity<T> cannotDelete(ZtParamEntity<T> ztParamEntity) {
-        ztParamEntity.getZtResBeanEx().setCode(ZtStrUtils.FAIL_CODE);
-        ztParamEntity.getZtResBeanEx().setMsg(ZtStrUtils.FAIL_MSG);
+        ztParamEntity.getZtResBeanEx().setCode(ztResBeanExConfig.getFailCode());
+        ztParamEntity.getZtResBeanEx().setMsg(ztResBeanExConfig.getFailMsg());
         return ztParamEntity;
     }
 
@@ -319,8 +323,8 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     }
 
     protected ZtParamEntity<T> cannotInsertBatch(ZtParamEntity<T> ztParamEntity) {
-        ztParamEntity.getZtResBeanEx().setCode(ZtStrUtils.FAIL_CODE);
-        ztParamEntity.getZtResBeanEx().setMsg(ZtStrUtils.FAIL_MSG);
+        ztParamEntity.getZtResBeanEx().setCode(ztResBeanExConfig.getFailCode());
+        ztParamEntity.getZtResBeanEx().setMsg(ztResBeanExConfig.getFailMsg());
         return ztParamEntity;
     }
 
@@ -333,8 +337,8 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     }
 
     protected ZtParamEntity<T> cannotDeleteBatch(ZtParamEntity<T> ztParamEntity) {
-        ztParamEntity.getZtResBeanEx().setCode(ZtStrUtils.FAIL_CODE);
-        ztParamEntity.getZtResBeanEx().setMsg(ZtStrUtils.FAIL_MSG);
+        ztParamEntity.getZtResBeanEx().setCode(ztResBeanExConfig.getFailCode());
+        ztParamEntity.getZtResBeanEx().setMsg(ztResBeanExConfig.getFailMsg());
         return ztParamEntity;
     }
 

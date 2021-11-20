@@ -103,10 +103,10 @@ public class ZtSimpleBaseSelectProvider {
             }
             if (null != qw.getCurrent() && null != qw.getSize()) {
                 if (qw.getCurrent().compareTo(1L) < 0) {
-                    qw.setCurrent(Long.valueOf(ZtStrUtils.START));
+                    qw.setCurrent(1L);
                 }
                 if (qw.getSize().compareTo(1L) < 0) {
-                    qw.setSize(Long.valueOf(ZtStrUtils.LIMIT));
+                    qw.setSize(20L);
                 }
                 if (ZtTableInfoHelperStr.DB_PRE.equalsIgnoreCase(ZtTableInfoHelperStr.DB_PRE_MYSQL)) {
                     fromWhereStr.append(" LIMIT ").append(((qw.getCurrent() - 1) * qw.getSize())).append(" , ").append(qw.getSize());

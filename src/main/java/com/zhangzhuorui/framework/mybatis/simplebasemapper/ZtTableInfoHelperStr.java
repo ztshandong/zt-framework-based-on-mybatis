@@ -67,7 +67,7 @@ public class ZtTableInfoHelperStr {
     }
 
     public static String getSelectColumnSql(ZtQueryWrapper qw) {
-        String selectSql = TABLE_SELECT_SQL_MAP.get(qw.getTableName());
+        String selectSql = TABLE_SELECT_SQL_MAP.get(qw.getTableName() + qw.getUnionInfo());
         if (StringUtils.isEmpty(selectSql)) {
             StringBuilder sb = new StringBuilder();
             List<ResultMapping> collect = ((ResultMap) qw.getResultMap()).getResultMappings().stream().filter(t -> t.getNestedQueryId() == null && t.getNestedResultMapId() == null && t.getColumn() != null).collect(Collectors.toList());
@@ -93,18 +93,18 @@ public class ZtTableInfoHelperStr {
             }
             sb.deleteCharAt(sb.length() - 2);
             selectSql = sb.toString();
-            TABLE_SELECT_SQL_MAP.put(qw.getTableName(), selectSql);
+            TABLE_SELECT_SQL_MAP.put(qw.getTableName() + qw.getUnionInfo(), selectSql);
         }
         return selectSql;
     }
 
     public static String getSelectByIdSql(ZtQueryWrapper qw) {
-        String selectByIdSql = TABLE_SELECT_SQL_MAP.get(qw.getTableName() + "id");
+        String selectByIdSql = TABLE_SELECT_SQL_MAP.get(qw.getTableName() + qw.getUnionInfo() + "id");
         if (StringUtils.isEmpty(selectByIdSql)) {
             String selectColumnSql = getSelectColumnSql(qw);
             ResultMapping resultMapping = ((ResultMap) qw.getResultMap()).getIdResultMappings().get(0);
             selectByIdSql = "SELECT " + selectColumnSql + " FROM " + qw.getTableName() + " WHERE " + qw.getTableName() + "." + resultMapping.getColumn() + " = #{" + ZtTableInfoHelperStr.PARAM_NAME + ".obj." + resultMapping.getProperty() + "}";
-            TABLE_SELECT_SQL_MAP.put(qw.getTableName() + "id", selectByIdSql);
+            TABLE_SELECT_SQL_MAP.put(qw.getTableName() + qw.getUnionInfo() + "id", selectByIdSql);
         }
         return selectByIdSql;
     }
