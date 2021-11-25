@@ -20,6 +20,8 @@ import java.util.List;
  */
 public interface IZtSimpleBaseService<T> {
 
+    Class<T> getEntityClass();
+
     ZtParamEntity<T> getInitZtParamEntity(T obj);
 
     ZtParamEntity<T> getInitZtParamEntity(T obj, SqlCommandType sqlCommandType);

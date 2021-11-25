@@ -94,6 +94,13 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         return resultMap;
     }
 
+    Class<T> entityClass;
+
+    @Override
+    public Class<T> getEntityClass() {
+        return entityClass;
+    }
+
     @Autowired
     DataSource dataSource;
 
@@ -147,7 +154,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         String name = baseSelectMapper.getName();
         ParameterizedType parameterizedType = (ParameterizedType) this.getClass().getGenericSuperclass();
         Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
-        Class<T> entityClass = (Class<T>) actualTypeArguments[0];
+        entityClass = (Class<T>) actualTypeArguments[0];
         Optional<ResultMap> mybatisResultMap = getResultMapSet().stream().filter(t -> (t.getIdResultMappings() != null && t.getIdResultMappings().size() > 0) && t.getId().equals(name + ".BaseResultMap") && t.getType().equals(entityClass)).findAny();
         if (mybatisResultMap.isPresent()) {
             ResultMap resultMap = mybatisResultMap.get();

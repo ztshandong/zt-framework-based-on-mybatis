@@ -1,7 +1,7 @@
 package com.zhangzhuorui.framework.mybatis.enums;
 
-import com.sun.tracing.dtrace.ModuleName;
 import com.zhangzhuorui.framework.core.IZtBaseEnum;
+import io.swagger.annotations.ApiModel;
 
 /**
  * @author :  张涛 zhangtao
@@ -12,8 +12,8 @@ import com.zhangzhuorui.framework.core.IZtBaseEnum;
  * @updateDate :
  * @updateRemark :
  */
-@ModuleName("框架枚举用法示例")
-// @ApiModel(value = "枚举1", description = "枚举1")
+// @ModuleName("框架枚举用法示例1")
+@ApiModel(value = "框架枚举用法示例1", description = "框架枚举用法示例1")
 public enum ZtFrameEnum implements IZtBaseEnum<ZtFrameEnum> {
 
     ONE1(11, "壹1"), TWO1(21, "贰1"), THREE1(31, "叁1");

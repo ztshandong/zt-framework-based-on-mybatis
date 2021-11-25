@@ -1,6 +1,7 @@
 package com.zhangzhuorui.framework.mybatis.simplebasecontroller;
 
 import com.zhangzhuorui.framework.core.ZtBasicEntity;
+import com.zhangzhuorui.framework.core.ZtBasicNumberIdEntity4Swagger;
 import com.zhangzhuorui.framework.core.ZtPage;
 import com.zhangzhuorui.framework.core.ZtResBeanEx;
 import com.zhangzhuorui.framework.core.ZtResBeanExConfig;
@@ -9,17 +10,22 @@ import com.zhangzhuorui.framework.core.ZtStrUtils;
 import com.zhangzhuorui.framework.mybatis.core.ZtParamEntity;
 import com.zhangzhuorui.framework.mybatis.core.ZtValidList;
 import com.zhangzhuorui.framework.mybatis.simplebaseservice.IZtSimpleBaseService;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ClassUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.beans.Introspector;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -63,35 +69,38 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
         return (ZtSimpleBaseController<T>) bean1;
     }
 
-    // @ApiOperation(value = "标准接口：获取所有枚举名。给前端看的，代码中用不到")
+    @ApiOperation(value = "标准接口：获取所有枚举名及描述。")
     @RequestMapping(value = ZtStrUtils.GET_ENUM_NAME, method = RequestMethod.GET)
     @ResponseBody
     public ZtResBeanEx getAllEnumName() {
         return ZtResBeanEx.ok(ZtSpringUtil.getEnumName());
     }
 
-    // @ApiOperation(value = "标准接口：根据枚举名获取枚举内容，前端可以用")
+    @ApiImplicitParams({@ApiImplicitParam(name = "enumName", value = "枚举名称。getEnumName接口返回的数据", paramType = "query", required = true)})
+    @ApiOperation(value = "标准接口：根据枚举名获取枚举内容，前端可以用")
     @RequestMapping(value = ZtStrUtils.GET_ENUM_INFO, method = RequestMethod.GET)
     @ResponseBody
-    public ZtResBeanEx getEnumInfo(String enumName) {
+    public ZtResBeanEx getEnumInfo(@RequestParam String enumName) {
         return ZtResBeanEx.ok(ZtSpringUtil.getEnumInfo(enumName));
     }
 
-    // @ApiOperation(value = "标准接口：刷新本服务所有缓存")
+    @ApiOperation(value = "标准接口：刷新本服务所有缓存")
     @RequestMapping(value = ZtStrUtils.REFRESH_CACHE, method = RequestMethod.POST)
     @ResponseBody
     public void refreshCache() throws Exception {
         getIZtSimpleBaseService().refreshCache();
     }
 
-    // @ApiOperation(value = "标准接口：刷新本服务指定缓存")
+    @ApiImplicitParams({@ApiImplicitParam(name = "cacheName", value = "缓存名称", paramType = "query", required = true)})
+    @ApiOperation(value = "标准接口：刷新本服务指定缓存")
     @RequestMapping(value = ZtStrUtils.REFRESH_CACHE_BY_NAME, method = RequestMethod.POST)
     @ResponseBody
-    public void refreshCache(String cacheName) {
+    public void refreshCache(@RequestParam String cacheName) {
         getIZtSimpleBaseService().refreshCache(cacheName);
     }
 
-    // @ApiOperation(value = "标准接口：刷新当前用户所有相关缓存")
+    @ApiImplicitParams({@ApiImplicitParam(name = "userInfo", value = "用户信息", paramType = "body", required = true)})
+    @ApiOperation(value = "标准接口：刷新当前用户所有相关缓存")
     @RequestMapping(value = ZtStrUtils.REFRESH_CACHE_BY_CUR_USER_ID, method = RequestMethod.POST)
     @ResponseBody
     public void refreshCacheByCurUserId(@RequestBody T userInfo) {
@@ -102,10 +111,11 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
         return ztParamEntity;
     }
 
-    // @ApiOperation(value = "标准接口，查询。严格匹配查询条件，默认每页20条。默认返回所有列，可配合entity中的queryHelper返回指定列")
+    // @ApiImplicitParams({@ApiImplicitParam(name = "entity", value = "查询条件", paramType = "body", required = false, dataTypeClass = ZtBasicEntity.class)})
+    @ApiOperation(value = "标准接口，分页查询。严格匹配查询条件，不传查询条件则查询所有数据，默认每页大小可配置。默认返回所有列，可配合entity中的queryHelper返回指定列")
     @RequestMapping(value = ZtStrUtils.SELECT_SIMPLE, method = RequestMethod.POST)
     @ResponseBody
-    public final ZtResBeanEx<ZtPage<T>> selectSimple(
+    public ZtResBeanEx<ZtPage<T>> selectSimple(
             @RequestBody(required = false) T entity
     ) throws Exception {
         if (entity != null) {
@@ -129,13 +139,15 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
         return ztParamEntity;
     }
 
-    // @ApiOperation(value = "标准接口。根据id获取详情")
+    @ApiImplicitParams({@ApiImplicitParam(name = "entity", value = "查询对象", paramType = "body", required = true, dataType = "ZtBasicNumberIdEntity4Swagger")})
+    //@Example无效 @ApiImplicitParams({@ApiImplicitParam(name = "entity", value = "查询条件", paramType = "body", required = true, dataTypeClass = ZtBasicNumberIdEntity4Swagger.class, examples = @Example(value = @ExampleProperty(mediaType = "application/json", value = "{\"id\":100}")))})
+    @ApiOperation(value = "标准接口。根据id获取详情")
     @RequestMapping(value = ZtStrUtils.SELECT_ID_SIMPLE, method = RequestMethod.POST)
     @ResponseBody
-    public final ZtResBeanEx<T> selectIdSimple(@RequestBody T t) throws Exception {
+    public ZtResBeanEx<T> selectIdSimple(@RequestBody T entity) throws Exception {
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
-        ztParamEntity.setEntity(t);
+        ztParamEntity.setEntity(entity);
         ztParamEntity = getThisController().beforeSelectId(ztParamEntity);
         ztParamEntity = getIZtSimpleBaseService().ztSimpleSelectByPrimaryKey(ztParamEntity);
         ztParamEntity = getThisController().afterSelectId(ztParamEntity);
@@ -155,14 +167,15 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     // @Override
     // @RequestMapping(value = ZtStrUtils.SELECT_SIMPLE_ALL, method = RequestMethod.POST)
     // @ResponseBody
-    // @ApiOperation(value = "标准接口。查询所有数据，最多1000条。适用于一些数据量比较少的基础信息类的表，理论上这种数据都可以用缓存。业务表尽量不要用。这个默认不开放，需要的controller自己添加@RequestMapping")
+    @ApiOperation(value = "标准接口。查询所有数据，最多数据量可配置。适用于一些数据量比较少的基础信息类的表，理论上这种数据都可以用缓存。业务表尽量不要用。这个默认不开放，需要的controller自己添加@RequestMapping")
     public ZtResBeanEx<ZtPage<T>> ztSimpleSelectAll() throws Exception {
         ZtParamEntity<T> ztSimpleSelectAll = getIZtSimpleBaseService().ztSimpleSelectAll();
         return ztSimpleSelectAll.getZtResBeanEx();
     }
 
     //400 org.springframework.web.bind.MethodArgumentNotValidException
-    // @ApiOperation(value = "标准接口：单条新增")
+    // @ApiImplicitParams({@ApiImplicitParam(name = "entity", value = "需要保存的数据", paramType = "body", required = true)})
+    @ApiOperation(value = "标准接口：单条新增")
     @RequestMapping(value = ZtStrUtils.INSERT_SIMPLE, method = RequestMethod.POST)
     @ResponseBody
     public final ZtResBeanEx insertSimple(@Valid @RequestBody T entity) throws Exception {
@@ -186,7 +199,8 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     }
 
     //500 javax.validation.ConstraintViolationException
-    // @ApiOperation(value = "标准接口：批量新增")
+    // @ApiImplicitParams({@ApiImplicitParam(name = "entityList", value = "需要保存的数据列表", paramType = "body", required = true)})
+    @ApiOperation(value = "标准接口：批量新增")
     @RequestMapping(value = ZtStrUtils.INSERT_BATCH_SIMPLE, method = RequestMethod.POST)
     @ResponseBody
     public final ZtResBeanEx insertBatchSimple(@Valid @RequestBody ZtValidList<T> entityList) throws Exception {
@@ -209,7 +223,8 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
         return ztParamEntity.getZtResBeanEx();
     }
 
-    // @ApiOperation(value = "标准接口：更新（只更新有值的列）")
+    // @ApiImplicitParams({@ApiImplicitParam(name = "entity", value = "需要更新的数据", paramType = "body", required = true)})
+    @ApiOperation(value = "标准接口：动态更新（只更新传入的列）")
     @RequestMapping(value = ZtStrUtils.UPDATE_SIMPLE, method = RequestMethod.POST)
     @ResponseBody
     public final ZtResBeanEx updateSimple(@RequestBody T entity) throws Exception {
@@ -230,7 +245,8 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
         return ztParamEntity.getZtResBeanEx();
     }
 
-    // @ApiOperation(value = "标准接口：根据id删除")
+    @ApiImplicitParams({@ApiImplicitParam(name = "entity", value = "操作对象", paramType = "body", required = true, dataType = "ZtBasicNumberIdEntity4Swagger")})
+    @ApiOperation(value = "标准接口：根据id删除")
     @RequestMapping(value = ZtStrUtils.DELETE_SIMPLE, method = RequestMethod.POST)
     @ResponseBody
     public final ZtResBeanEx deleteSimple(@RequestBody T entity) throws Exception {
@@ -251,13 +267,21 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
         return ztParamEntity.getZtResBeanEx();
     }
 
-    // @ApiOperation(value = "标准接口：根据ids批量删除")
+    @ApiOperation(value = "标准接口：根据ids批量删除")
     @RequestMapping(value = ZtStrUtils.DELETE_BATCH_SIMPLE, method = RequestMethod.POST)
     @ResponseBody
-    public final ZtResBeanEx deleteBatchSimple(@RequestBody List<T> entityList) throws Exception {
+    public final ZtResBeanEx deleteBatchSimple(@RequestBody List<ZtBasicNumberIdEntity4Swagger> entityList) throws Exception {
+
+        List<T> collect = new LinkedList<>();
+        for (ZtBasicNumberIdEntity4Swagger ztBasicNumberIdEntity4Swagger : entityList) {
+            T tmp = getIZtSimpleBaseService().getEntityClass().newInstance();
+            tmp.setId(ztBasicNumberIdEntity4Swagger.getId());
+            collect.add(tmp);
+        }
+
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
-        ztParamEntity.setEntityList(entityList);
+        ztParamEntity.setEntityList(collect);
         ztParamEntity = getThisController().beforeDeleteBatch(ztParamEntity);
         if (ztParamEntity.isCanDelete()) {
             ztParamEntity = getIZtSimpleBaseService().ztSimpleDeleteByPrimaryKeyBatch(ztParamEntity);
