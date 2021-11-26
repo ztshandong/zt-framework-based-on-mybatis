@@ -827,6 +827,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztCannotSimpleUpdateByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception {
+        ztParamEntity.getZtResBeanEx().setSuccess(false);
         ztParamEntity.getZtResBeanEx().setCode(getZtResBeanExConfig().getFailCode());
         ztParamEntity.getZtResBeanEx().setMsg(getZtResBeanExConfig().getFailMsg());
         return ztParamEntity;
@@ -891,6 +892,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztCannotSimpleUpdateByParam(ZtParamEntity<T> ztParamEntity) throws Exception {
+        ztParamEntity.getZtResBeanEx().setSuccess(false);
         ztParamEntity.getZtResBeanEx().setCode(getZtResBeanExConfig().getFailCode());
         ztParamEntity.getZtResBeanEx().setMsg(getZtResBeanExConfig().getFailMsg());
         return ztParamEntity;
@@ -949,6 +951,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztCannotSimpleDeleteByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception {
+        ztParamEntity.getZtResBeanEx().setSuccess(false);
         ztParamEntity.getZtResBeanEx().setCode(getZtResBeanExConfig().getFailCode());
         ztParamEntity.getZtResBeanEx().setMsg(getZtResBeanExConfig().getFailMsg());
         return ztParamEntity;
@@ -1009,6 +1012,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztCannotSimpleDeleteByPrimaryKeyBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
+        ztParamEntity.getZtResBeanEx().setSuccess(false);
         ztParamEntity.getZtResBeanEx().setCode(getZtResBeanExConfig().getFailCode());
         ztParamEntity.getZtResBeanEx().setMsg(getZtResBeanExConfig().getFailMsg());
         return ztParamEntity;
@@ -1095,6 +1099,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztCannotSimpleInsert(ZtParamEntity<T> ztParamEntity) throws Exception {
+        ztParamEntity.getZtResBeanEx().setSuccess(false);
         ztParamEntity.getZtResBeanEx().setCode(getZtResBeanExConfig().getFailCode());
         ztParamEntity.getZtResBeanEx().setMsg(getZtResBeanExConfig().getFailMsg());
         return ztParamEntity;
@@ -1205,6 +1210,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztCannotSimpleInsertBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
+        ztParamEntity.getZtResBeanEx().setSuccess(false);
         ztParamEntity.getZtResBeanEx().setCode(getZtResBeanExConfig().getFailCode());
         ztParamEntity.getZtResBeanEx().setMsg(getZtResBeanExConfig().getFailMsg());
         return ztParamEntity;
