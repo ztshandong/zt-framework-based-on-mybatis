@@ -111,6 +111,8 @@ public interface IZtSimpleBaseService<T> {
 
     ZtResBeanEx ztSimpleUpdate(T t) throws Exception;
 
+    ZtQueryWrapper<T> getQueryWrapper(T obj, boolean writeMapNullValue, SqlCommandType sqlCommandType);
+
     /**
      * 查询所有数据。适用于一些数据量比较少的基础信息类的表，理论上这种数据都可以用缓存。业务表尽量不要用
      *

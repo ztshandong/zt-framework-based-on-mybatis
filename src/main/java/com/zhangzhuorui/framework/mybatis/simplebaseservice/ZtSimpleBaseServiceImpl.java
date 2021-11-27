@@ -332,8 +332,8 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
      * @updateDate :
      * @updateRemark :
      */
-    // @Override
-    private final ZtQueryWrapper<T> getQueryWrapper(T obj, boolean writeMapNullValue, SqlCommandType sqlCommandType) {
+    @Override
+    public final ZtQueryWrapper<T> getQueryWrapper(T obj, boolean writeMapNullValue, SqlCommandType sqlCommandType) {
         ZtQueryWrapper<T> wrapper = new ZtQueryWrapper<>();
         String logicDeleteFieldName = getLogicDeleteFieldName();
         wrapper.setUnionInfo(getUnionInfo(this));
