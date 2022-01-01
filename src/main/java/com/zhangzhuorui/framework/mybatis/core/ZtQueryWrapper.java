@@ -599,7 +599,7 @@ public class ZtQueryWrapper<T> implements Serializable {
             if (firstValue instanceof Date && secondValue instanceof Date) {
                 if (((Date) firstValue).compareTo((Date) secondValue) == 0) {
                     if (((Date) secondValue).getHours() == 0 && ((Date) secondValue).getMinutes() == 0 && ((Date) secondValue).getSeconds() == 0) {
-                        Instant instant = ((Date) secondValue).toInstant().plus(Duration.ofDays(1));
+                        Instant instant = ((Date) secondValue).toInstant().plus(Duration.ofHours(23)).plus(Duration.ofMinutes(59)).plus(Duration.ofSeconds(59));
                         secondValue = Date.from(instant);
                     }
                 }
