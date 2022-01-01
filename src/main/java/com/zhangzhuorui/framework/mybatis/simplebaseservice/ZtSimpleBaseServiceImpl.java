@@ -492,10 +492,10 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
             if (sqlCommandType.equals(SqlCommandType.SELECT)) {
                 T entity = ztParamEntity.getEntity();
                 if (entity != null) {
-                    Date startDate = entity.getStartDate();
-                    Date endDate = entity.getEndDate();
-                    Date startTime = entity.getStartTime();
-                    Date endTime = entity.getEndTime();
+                    Date startDate = entity.getQueryStartDate();
+                    Date endDate = entity.getQueryEndDate();
+                    Date startTime = entity.getQueryStartTime();
+                    Date endTime = entity.getQueryEndTime();
 
                     Date start = null, end = null;
                     if (startDate != null) {

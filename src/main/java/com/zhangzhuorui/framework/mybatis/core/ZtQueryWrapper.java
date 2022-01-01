@@ -14,7 +14,10 @@ import org.springframework.util.StringUtils;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -593,6 +596,14 @@ public class ZtQueryWrapper<T> implements Serializable {
             }
         } else if (ztQueryWrapperEnum.equals(ZtQueryWrapperEnum.BETWEEN) || ztQueryWrapperEnum.equals(ZtQueryWrapperEnum.NOT_BETWEEN)) {
             entity.setBetweenStart(firstValue);
+            if (firstValue instanceof Date && secondValue instanceof Date) {
+                if (((Date) firstValue).compareTo((Date) secondValue) == 0) {
+                    if (((Date) secondValue).getHours() == 0 && ((Date) secondValue).getMinutes() == 0 && ((Date) secondValue).getSeconds() == 0) {
+                        Instant instant = ((Date) secondValue).toInstant().plus(Duration.ofDays(1));
+                        secondValue = Date.from(instant);
+                    }
+                }
+            }
             entity.setBetweenEnd(secondValue);
         }
         return (ZtQueryWrapper<T>) this;
