@@ -70,6 +70,8 @@ public class ZtQueryWrapper<T> implements Serializable {
 
     private boolean distinctFlag;
 
+    private String groupBy;
+
     private String orderBy;
 
     private String selectColumn = "*";
@@ -404,6 +406,14 @@ public class ZtQueryWrapper<T> implements Serializable {
 
     public void setDistinctFlag(boolean distinctFlag) {
         this.distinctFlag = distinctFlag;
+    }
+
+    public String getGroupBy() {
+        return groupBy;
+    }
+
+    public void setGroupBy(String groupBy) {
+        this.groupBy = groupBy;
     }
 
     public String getOrderBy() {

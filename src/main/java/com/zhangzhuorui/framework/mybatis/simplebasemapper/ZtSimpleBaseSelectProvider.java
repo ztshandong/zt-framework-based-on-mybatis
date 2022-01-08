@@ -95,11 +95,14 @@ public class ZtSimpleBaseSelectProvider {
             fromWhereStr.append(joinWhere);
         }
         if (!qw.isCount()) {
+            if (null != qw.getGroupBy()) {
+                fromWhereStr.append(" GROUP BY ").append(qw.getTableName()).append(".").append(qw.getGroupBy());
+            }
             if (null != qw.getOrderBy()) {
                 fromWhereStr.append(" ORDER BY ").append(qw.getTableName()).append(".").append(qw.getOrderBy());
             } else {
                 ResultMapping idResultMapping = ((ResultMap) qw.getResultMap()).getIdResultMappings().get(0);
-                fromWhereStr.append(" ORDER BY ").append(qw.getTableName()).append(".").append(idResultMapping.getColumn());
+                fromWhereStr.append(" ORDER BY ").append(qw.getTableName()).append(".").append(idResultMapping.getColumn()).append(" DESC ");
             }
             if (null != qw.getCurrent() && null != qw.getSize()) {
                 if (qw.getCurrent().compareTo(1L) < 0) {
@@ -121,11 +124,10 @@ public class ZtSimpleBaseSelectProvider {
             }
         }
 
-        if (qw.getOrderBy() == null
-                && joinWrapperList.size() <= 0
+        if (joinWrapperList.size() <= 0
                 && null != qw.getCurrent()
                 && qw.getCurrent().compareTo(1L) > 0
-                && !qw.isCount()) {
+                && !qw.isCount() && null == qw.getGroupBy()) {
             ResultMapping idResultMapping = ((ResultMap) qw.getResultMap()).getIdResultMappings().get(0);
             String idColumn = idResultMapping.getColumn();
             finalSelectSql.append(selectColumnStr).append(" FROM ").append(qw.getTableName()).append(" ")
