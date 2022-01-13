@@ -1,5 +1,6 @@
 package com.zhangzhuorui.framework.mybatis.simplebaseservice;
 
+import com.zhangzhuorui.framework.core.ZtPage;
 import com.zhangzhuorui.framework.core.ZtPropertyFunc;
 import com.zhangzhuorui.framework.core.ZtQueryConditionEntity;
 import com.zhangzhuorui.framework.core.ZtResBeanEx;
@@ -7,6 +8,7 @@ import com.zhangzhuorui.framework.mybatis.core.ZtParamEntity;
 import com.zhangzhuorui.framework.mybatis.core.ZtQueryWrapper;
 import org.apache.ibatis.mapping.SqlCommandType;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,6 +21,13 @@ import java.util.List;
  * @updateRemark :
  */
 public interface IZtSimpleBaseService<T> {
+
+    default ZtPage<T> getEmptyPage() {
+        ZtPage<T> ztPage = new ZtPage<>();
+        ztPage.setTotal(0);
+        ztPage.setResults(Collections.emptyList());
+        return ztPage;
+    }
 
     Class<T> getEntityClass();
 
@@ -103,6 +112,9 @@ public interface IZtSimpleBaseService<T> {
 
     List<T> ztSimpleGetList(T t) throws Exception;
 
+    //根据传入的条件获取查询结果
+    List<T> ztSimpleGetListByIds(List idList) throws Exception;
+
     T ztSimpleInsert(T t) throws Exception;
 
     List<T> ztSimpleInsertBatch(List<T> list) throws Exception;
@@ -168,6 +180,14 @@ public interface IZtSimpleBaseService<T> {
     ZtParamEntity<T> ztSimpleSelectByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception;
 
     ZtParamEntity<T> ztAfterSimpleSelectByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception;
+
+    /**
+     * 根据id批量查询
+     *
+     * @param ztParamEntity
+     * @return
+     */
+    ZtParamEntity<T> ztSimpleSelectByPrimaryKeyBatch(ZtParamEntity<T> ztParamEntity) throws Exception;
 
     /**
      * 根据主键动态更新单条数据，只更不为null的字段。注意：""也不为null

@@ -8,6 +8,8 @@ import com.zhangzhuorui.framework.core.ZtColumnUtil;
 import com.zhangzhuorui.framework.core.ZtPage;
 import com.zhangzhuorui.framework.core.ZtPropertyFunc;
 import com.zhangzhuorui.framework.core.ZtQueryConditionEntity;
+import com.zhangzhuorui.framework.core.ZtQueryTypeEnum;
+import com.zhangzhuorui.framework.core.ZtQueryWrapperEnum;
 import com.zhangzhuorui.framework.core.ZtResBeanEx;
 import com.zhangzhuorui.framework.core.ZtResBeanExConfig;
 import com.zhangzhuorui.framework.core.ZtSpringUtil;
@@ -358,9 +360,9 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
                 String orderByColumn = getColumnName(orderByField);
                 if (!StringUtils.isEmpty(orderByColumn)) {
                     if (obj.getAscFlag() == null || obj.getAscFlag()) {
-                        wrapper.setOrderBy(" " + orderByColumn + " ASC ");
+                        wrapper.setOrderBy(orderByColumn + " ASC ");
                     } else {
-                        wrapper.setOrderBy(" " + orderByColumn + " DESC ");
+                        wrapper.setOrderBy(orderByColumn + " DESC ");
                     }
                 }
             }
@@ -591,6 +593,16 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     }
 
     @Override
+    public List<T> ztSimpleGetListByIds(List idList) throws Exception {
+        ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
+        ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
+        ztParamEntity.setIdList(idList);
+        ztParamEntity = this.ztSimpleSelectByPrimaryKeyBatch(ztParamEntity);
+        List<T> list = this.getList(ztParamEntity);
+        return list;
+    }
+
+    @Override
     public T ztSimpleInsert(T t) throws Exception {
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok(t));
@@ -765,6 +777,21 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
 
     @Override
     public ZtParamEntity<T> ztAfterSimpleSelectByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception {
+        return ztParamEntity;
+    }
+
+    @Override
+    public final ZtParamEntity<T> ztSimpleSelectByPrimaryKeyBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
+        ztParamEntity = this.initSimpleWrapper(ztParamEntity, SqlCommandType.SELECT);
+        ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
+        ResultMapping idResultMapping = ((ResultMap) this.getResultMap()).getIdResultMappings().get(0);
+        String fieldName = idResultMapping.getProperty();
+        ztQueryWrapper.opt(fieldName, ztParamEntity.getIdList(), null, ZtQueryTypeEnum.AND, ZtQueryWrapperEnum.IN);
+        List<T> list = getZtSimpleBaseMapper().ztSimpleSelectProvider(ztQueryWrapper);
+        ZtPage<T> page = new ZtPage<>();
+        page.setTotal(list.size());
+        page.setResults(list);
+        ztParamEntity.getZtResBeanEx().setData(page);
         return ztParamEntity;
     }
     //endregion

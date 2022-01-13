@@ -116,6 +116,20 @@ public class ZtQueryWrapper<T> implements Serializable {
         return column;
     }
 
+    public <T> String getColumnName(ZtJoinWrapper<T> ztJoinWrapper, String getFieldName) {
+        String column;
+
+        if (ztJoinWrapper == null) {
+            ResultMapping resultMapping = ((ResultMap) this.resultMap).getResultMappings().stream().filter(t -> t.getProperty().equals(getFieldName)).findAny().get();
+            column = resultMapping.getColumn();
+        } else {
+            Object joinResultMap = ztJoinWrapper.getZtQueryWrapper().getResultMap();
+            ResultMapping resultMapping = ((ResultMap) joinResultMap).getResultMappings().stream().filter(t -> t.getProperty().equals(getFieldName)).findAny().get();
+            column = resultMapping.getColumn();
+        }
+        return column;
+    }
+
     public <T, T1> void innerJoin(ZtJoinWrapper<T> leftWrapper, ZtPropertyFunc<T, ?> leftField, ZtJoinWrapper<T1> rightWrapper, ZtPropertyFunc<T1, ?> rightField) {
         leftWrapper.setJoinType(" INNER JOIN ");
         doJoin(leftWrapper, leftField, rightWrapper, rightField);
@@ -614,6 +628,45 @@ public class ZtQueryWrapper<T> implements Serializable {
                     }
                 }
             }
+            entity.setBetweenEnd(secondValue);
+        }
+        return (ZtQueryWrapper<T>) this;
+    }
+
+    public ZtQueryWrapper<T> opt(String fieldName, Object firstValue, Object secondValue, ZtQueryTypeEnum ztQueryTypeEnum, ZtQueryWrapperEnum ztQueryWrapperEnum) {
+        ZtQueryConditionEntity entity = new ZtQueryConditionEntity();
+
+        Optional<ZtQueryConditionEntity> any = conditons.stream().filter(t -> t.getFieldName().equals(fieldName)).findAny();
+        if (any.isPresent()) {
+            entity = any.get();
+        } else {
+            entity.setFieldName(fieldName);
+            String columnName = getColumnName(null, fieldName);
+            entity.setColumnName(columnName);
+            conditons.add(entity);
+        }
+        entity.setQueryWrapper(ztQueryWrapperEnum);
+        entity.setQueryType(ztQueryTypeEnum);
+
+        if (firstValue instanceof List || firstValue instanceof ZtQueryWrapper) {
+            entity.setList(firstValue);
+        }
+
+        if (ztQueryWrapperEnum.equals(ZtQueryWrapperEnum.LIKE) || ztQueryWrapperEnum.equals(ZtQueryWrapperEnum.NOT_LIKE)) {
+            try {
+                Field field = ZtUtils.getField(obj, fieldName);
+                field.setAccessible(true);
+                Object value = field.get(obj);
+                if (value == null) {
+                    value = "";
+                }
+                String likeValue = "%" + value + "%";
+                field.set(obj, likeValue);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (ztQueryWrapperEnum.equals(ZtQueryWrapperEnum.BETWEEN) || ztQueryWrapperEnum.equals(ZtQueryWrapperEnum.NOT_BETWEEN)) {
+            entity.setBetweenStart(firstValue);
             entity.setBetweenEnd(secondValue);
         }
         return (ZtQueryWrapper<T>) this;

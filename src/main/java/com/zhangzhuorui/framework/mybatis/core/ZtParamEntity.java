@@ -26,6 +26,9 @@ public class ZtParamEntity<T> implements Serializable {
     //可以缓存一下id
     private Serializable id;
 
+    //根据id批量查询
+    private List idList;
+
     //单个对象的实体类
     private T entity;
 
@@ -115,6 +118,14 @@ public class ZtParamEntity<T> implements Serializable {
 
     public void setId(Serializable id) {
         this.id = id;
+    }
+
+    public List getIdList() {
+        return idList;
+    }
+
+    public void setIdList(List idList) {
+        this.idList = idList;
     }
 
     public T getEntity() {

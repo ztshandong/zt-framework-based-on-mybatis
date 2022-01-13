@@ -184,6 +184,21 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
         return ztParamEntity;
     }
 
+    @ApiOperation(value = "标准查询接口。根据多个id批量获取详情", notes = ZtStrUtils.SELECT_SIMPLE_RES_SWAGGER)
+    @RequestMapping(value = ZtStrUtils.SELECT_ID_SIMPLE_BATCH, method = RequestMethod.POST)
+    @ResponseBody
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = ZtStrUtils.APIRESPONSE_MESSAGE, response = Object.class)
+    })
+    @ApiOperationSupport(order = 1002)
+    public final ZtResBeanEx<T> selectIdSimpleBatch(@RequestBody List<Long> idList) throws Exception {
+        ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
+        ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
+        ztParamEntity.setIdList(idList);
+        ztParamEntity = getIZtSimpleBaseService().ztSimpleSelectByPrimaryKeyBatch(ztParamEntity);
+        return ztParamEntity.getZtResBeanEx();
+    }
+
     //这个默认不开放，需要的controller自己添加@RequestMapping
     //如果需要数据权限还要记得添加数据权限注解
     // @Override
@@ -193,7 +208,7 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = ZtStrUtils.APIRESPONSE_MESSAGE, response = Object.class)
     })
-    @ApiOperationSupport(order = 1002)
+    @ApiOperationSupport(order = 1100)
     public ZtResBeanEx<ZtPage<T>> ztSimpleSelectAll() throws Exception {
         ZtParamEntity<T> ztSimpleSelectAll = getIZtSimpleBaseService().ztSimpleSelectAll();
         return ztSimpleSelectAll.getZtResBeanEx();
