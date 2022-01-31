@@ -321,6 +321,16 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         return ztParamEntity;
     }
 
+    @Override
+    public ZtParamEntity<T> getInitZtParamEntityWithOutLimit(T obj) {
+        if (obj.getLimit() == null) {
+            obj.setLimit(Long.valueOf(getZtResBeanExConfig().getNoLimit()));
+        }
+        ZtParamEntity<T> ztParamEntity = getInitZtParamEntity(obj);
+        ztParamEntity.setNeedCount(false);
+        return ztParamEntity;
+    }
+
     /**
      * 动态生成需要的条件。核心方法之一
      *

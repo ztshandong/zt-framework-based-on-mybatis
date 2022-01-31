@@ -39,6 +39,8 @@ public interface IZtSimpleBaseService<T> {
 
     ZtParamEntity<T> getInitZtParamEntityWithOutCount(T obj);
 
+    ZtParamEntity<T> getInitZtParamEntityWithOutLimit(T obj);
+
     String getUnionInfo(IZtSimpleBaseService<T> thisService);
 
     ZtParamEntity<T> initSimpleWrapper(ZtParamEntity<T> ztParamEntity, SqlCommandType sqlCommandType);
