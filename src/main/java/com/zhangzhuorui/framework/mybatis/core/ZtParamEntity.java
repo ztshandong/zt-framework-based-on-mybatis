@@ -35,6 +35,12 @@ public class ZtParamEntity<T> implements Serializable {
     //批量保存、批量删除
     private List<T> entityList;
 
+    //根据某个字段批量查询
+    private String fieldName;
+
+    //根据某个字段批量查询-该字段的值
+    private List fieldValueList;
+
     //备用
     private Object otherParams;
 
@@ -142,6 +148,22 @@ public class ZtParamEntity<T> implements Serializable {
 
     public void setEntityList(List<T> entityList) {
         this.entityList = entityList;
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+    }
+
+    public List getFieldValueList() {
+        return fieldValueList;
+    }
+
+    public void setFieldValueList(List fieldValueList) {
+        this.fieldValueList = fieldValueList;
     }
 
     public Object getOtherParams() {

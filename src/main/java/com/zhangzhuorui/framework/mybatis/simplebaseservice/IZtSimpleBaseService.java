@@ -114,8 +114,16 @@ public interface IZtSimpleBaseService<T> {
 
     List<T> ztSimpleGetList(T t) throws Exception;
 
-    //根据传入的条件获取查询结果
+    //根据id批量查询
     List<T> ztSimpleGetListByIds(List idList) throws Exception;
+
+    //根据某个字段批量查询
+    List<T> ztSimpleGetListByOneField(String fieldName, List fieldValueList) throws Exception;
+
+    //根据某个字段批量查询
+    ZtParamEntity<T> ztSimpleSelectByOneFieldValue(ZtParamEntity<T> ztParamEntity) throws Exception;
+
+    T ztSimpleGetOne(T t) throws Exception;
 
     T ztSimpleInsert(T t) throws Exception;
 

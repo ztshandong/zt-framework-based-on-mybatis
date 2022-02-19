@@ -19,6 +19,7 @@ import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ClassUtils;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -196,6 +197,22 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
         ztParamEntity.setIdList(idList);
         ztParamEntity = getIZtSimpleBaseService().ztSimpleSelectByPrimaryKeyBatch(ztParamEntity);
+        return ztParamEntity.getZtResBeanEx();
+    }
+
+    @ApiOperation(value = "标准查询接口。根据某个字段批量查询")
+    @RequestMapping(value = ZtStrUtils.SELECT_ONE_FIELD_SIMPLE_BATCH + "/{fieldName}", method = RequestMethod.POST)
+    @ResponseBody
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = ZtStrUtils.APIRESPONSE_MESSAGE, response = Object.class)
+    })
+    @ApiOperationSupport(order = 1003)
+    public ZtResBeanEx<ZtPage<T>> ztSimpleGetListByOneField(@PathVariable String fieldName, @RequestBody List<Object> fieldValueList) throws Exception {
+        ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
+        ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
+        ztParamEntity.setFieldName(fieldName);
+        ztParamEntity.setFieldValueList(fieldValueList);
+        ztParamEntity = getIZtSimpleBaseService().ztSimpleSelectByOneFieldValue(ztParamEntity);
         return ztParamEntity.getZtResBeanEx();
     }
 

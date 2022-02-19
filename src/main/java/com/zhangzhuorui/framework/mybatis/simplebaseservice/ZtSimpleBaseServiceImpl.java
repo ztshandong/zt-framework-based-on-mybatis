@@ -613,6 +613,51 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     }
 
     @Override
+    public List<T> ztSimpleGetListByOneField(String fieldName, List fieldValueList) throws Exception {
+        ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
+        ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
+        ztParamEntity.setFieldName(fieldName);
+        ztParamEntity.setFieldValueList(fieldValueList);
+        ztParamEntity = this.ztSimpleSelectByOneFieldValue(ztParamEntity);
+        List<T> list = this.getList(ztParamEntity);
+        return list;
+    }
+
+    @Override
+    public final ZtParamEntity<T> ztSimpleSelectByOneFieldValue(ZtParamEntity<T> ztParamEntity) throws Exception {
+        ztParamEntity = this.initSimpleWrapper(ztParamEntity, SqlCommandType.SELECT);
+        ZtQueryWrapper ztQueryWrapper = ztParamEntity.getZtQueryWrapper();
+        ztQueryWrapper.opt(ztParamEntity.getFieldName(), ztParamEntity.getFieldValueList(), null, ZtQueryTypeEnum.AND, ZtQueryWrapperEnum.IN);
+        List<T> list = getZtSimpleBaseMapper().ztSimpleSelectProvider(ztQueryWrapper);
+        ZtPage<T> page = new ZtPage<>();
+        page.setTotal(list.size());
+        page.setResults(list);
+        ztParamEntity.getZtResBeanEx().setData(page);
+        return ztParamEntity;
+    }
+
+    @Override
+    public T ztSimpleGetOne(T t) throws Exception {
+        ZtParamEntity<T> ztParamEntity = new ZtParamEntity<T>();
+        ztParamEntity.setEntity(t);
+        try {
+            ztParamEntity = this.ztSimpleSelectProviderWithoutCount(ztParamEntity);
+            List<T> list = this.getList(ztParamEntity);
+            if (list.size() == 1) {
+                return list.get(0);
+            } else if (list.size() > 1) {
+                log.error("查到了多条数据,查询条件:{},返回结果:{}", JSON.toJSONString(t), JSON.toJSONString(list));
+                throw new RuntimeException("数据异常，请联系管理员");
+            }
+        } catch (Exception e) {
+            log.error(this.getClass().getSimpleName() + "发生异常：" + e);
+            throw e;
+        }
+        return null;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
     public T ztSimpleInsert(T t) throws Exception {
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok(t));
@@ -623,6 +668,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public List<T> ztSimpleInsertBatch(List<T> list) throws Exception {
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
@@ -633,6 +679,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ZtResBeanEx ztSimpleDelete(T t) throws Exception {
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
@@ -642,6 +689,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ZtResBeanEx ztSimpleUpdate(T t) throws Exception {
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
