@@ -1136,7 +1136,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         T entity = ztParamEntity.getEntity();
         Date now = new Date();
         entity.setGmtCreate(now);
-        entity.setGmtUpdate(now);
+        entity.setGmtUpdate(null);
         if (!getManualId()) {
             entity.setId(null);
         }
@@ -1257,7 +1257,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
             }
 
             entity.setGmtCreate(now);
-            entity.setGmtUpdate(now);
+            entity.setGmtUpdate(null);
 
             if (StringUtils.isEmpty(entity.getRemark())) {
                 entity.setRemark("");
