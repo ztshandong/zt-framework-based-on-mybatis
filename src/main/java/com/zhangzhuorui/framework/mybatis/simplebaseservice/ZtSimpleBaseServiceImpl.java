@@ -907,6 +907,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztAfterSimpleUpdateByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception {
+        getThisService().refreshCache();
         return ztParamEntity;
     }
 
@@ -972,6 +973,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztAfterSimpleUpdateByParam(ZtParamEntity<T> ztParamEntity) throws Exception {
+        getThisService().refreshCache();
         return ztParamEntity;
     }
 
@@ -1031,6 +1033,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztAfterSimpleDeleteByPrimaryKey(ZtParamEntity<T> ztParamEntity) throws Exception {
+        getThisService().refreshCache();
         return ztParamEntity;
     }
 
@@ -1092,6 +1095,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztAfterSimpleDeleteByPrimaryKeyBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
+        getThisService().refreshCache();
         return ztParamEntity;
     }
 
@@ -1179,6 +1183,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztAfterSimpleInsert(ZtParamEntity<T> ztParamEntity) throws Exception {
+        getThisService().refreshCache();
         return ztParamEntity;
     }
 
@@ -1290,6 +1295,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ZtParamEntity<T> ztAfterSimpleInsertBatch(ZtParamEntity<T> ztParamEntity) throws Exception {
+        getThisService().refreshCache();
         return ztParamEntity;
     }
 
