@@ -479,6 +479,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         }
 
         if (ztParamEntity.isUseCommonZtQueryWrapper()) {
+            ztParamEntity.setUseCommonZtQueryWrapper(false);
             if (ztParamEntity.getEntity() != null) {
                 ztParamEntity.setZtQueryWrapper(this.getQueryWrapper(ztParamEntity.getEntity(), false, sqlCommandType));
             } else if (ztParamEntity.getEntityList() != null && ztParamEntity.getEntityList().size() > 0) {
@@ -1267,7 +1268,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
             ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
         }
         if (ztParamEntity.isUseCommonZtQueryWrapper()) {
-
+            ztParamEntity.setUseCommonZtQueryWrapper(false);
             ztParamEntity.setZtQueryWrapper(this.getQueryWrapper(ztParamEntity.getEntityList().get(0), true, SqlCommandType.INSERT));
             ztParamEntity.getZtQueryWrapper().setObjList(ztParamEntity.getEntityList());
         }
