@@ -461,6 +461,12 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         return ztParamEntity;
     }
 
+    @Override
+    public List<T> ztSimpleSelectAllList() throws Exception {
+        ZtParamEntity<T> tZtParamEntity = getThisService().ztSimpleSelectAll();
+        return getThisService().getList(tZtParamEntity);
+    }
+
     /**
      * @param ztParamEntity :
      * @return :  com.zhangzhuorui.framework.core.ZtParamEntity<T>

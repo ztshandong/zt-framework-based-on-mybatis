@@ -142,6 +142,8 @@ public interface IZtSimpleBaseService<T> {
      */
     ZtParamEntity<T> ztSimpleSelectAll() throws Exception;
 
+    List<T> ztSimpleSelectAllList() throws Exception;
+
     void refreshCache() throws Exception;
 
     void refreshCache(String cacheName);
