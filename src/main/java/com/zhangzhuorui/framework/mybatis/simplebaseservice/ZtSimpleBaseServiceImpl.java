@@ -458,6 +458,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
         ztParamEntity.setNeedCount(false);
         ztParamEntity.setUseCommonZtQueryWrapper(false);
         ztParamEntity = getThisService().ztSimpleSelectProvider(ztParamEntity);
+        ztParamEntity.setZtQueryWrapper(null);
         return ztParamEntity;
     }
 
