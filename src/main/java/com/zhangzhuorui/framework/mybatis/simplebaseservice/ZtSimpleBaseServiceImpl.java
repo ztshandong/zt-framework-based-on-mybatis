@@ -13,6 +13,7 @@ import com.zhangzhuorui.framework.core.ZtQueryWrapperEnum;
 import com.zhangzhuorui.framework.core.ZtResBeanEx;
 import com.zhangzhuorui.framework.core.ZtResBeanExConfig;
 import com.zhangzhuorui.framework.core.ZtSpringUtil;
+import com.zhangzhuorui.framework.core.ZtStrUtils;
 import com.zhangzhuorui.framework.core.ZtUtils;
 import com.zhangzhuorui.framework.mybatis.core.ZtParamEntity;
 import com.zhangzhuorui.framework.mybatis.core.ZtQueryWrapper;
@@ -398,8 +399,19 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
 
         wrapper.setObj(obj);
 
+        boolean isList = false;
         for (String propertyName : jsonObject.keySet()) {
-            Optional<ResultMapping> any = getResultMap().getResultMappings().stream().filter(t -> t.getProperty().equals(propertyName)).findAny();
+            Object objValue = jsonObject.get(propertyName);
+            if (propertyName.endsWith(ZtStrUtils.LIST_VALUE_SUFFIX)) {
+                if (null == objValue) {
+                    continue;
+                }
+                isList = true;
+                int i = propertyName.lastIndexOf(ZtStrUtils.LIST_VALUE_SUFFIX);
+                propertyName = propertyName.substring(0, i);
+            }
+            String finalPropertyName = propertyName;
+            Optional<ResultMapping> any = getResultMap().getResultMappings().stream().filter(t -> t.getProperty().equals(finalPropertyName)).findAny();
             if (any.isPresent()) {
                 ResultMapping resultMapping = any.get();
                 if (resultMapping.getNestedQueryId() == null && resultMapping.getNestedResultMapId() == null && resultMapping.getColumn() != null) {
@@ -407,7 +419,19 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
                     entity.setFieldName(propertyName);
                     String column = resultMapping.getColumn();
                     entity.setColumnName(column);
-                    entityList.add(entity);
+                    Optional<ZtQueryConditionEntity> curQueryConditionEntity = entityList.stream().filter(t -> t.getFieldName().equals(finalPropertyName)).findAny();
+                    if (!curQueryConditionEntity.isPresent()) {
+                        entityList.add(entity);
+                    } else {
+                        entity = curQueryConditionEntity.get();
+                    }
+                    if (isList) {
+                        if (objValue instanceof List) {
+                            entity.setList(objValue);
+                            entity.setQueryWrapper(ZtQueryWrapperEnum.IN);
+                        }
+                        isList = false;
+                    }
                 }
             }
         }
