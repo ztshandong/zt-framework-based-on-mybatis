@@ -18,6 +18,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ClassUtils;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -240,7 +241,7 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
             @ApiResponse(code = 200, message = ZtStrUtils.APIRESPONSE_MESSAGE, response = Object.class)
     })
     @ApiOperationSupport(order = 2000)
-    public final ZtResBeanEx insertSimple(@Valid @RequestBody T entity) throws Exception {
+    public final ZtResBeanEx insertSimple(@Valid @RequestBody T entity, BindingResult bindingResult) throws Exception {
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok(entity));
         ztParamEntity.setEntity(entity);
@@ -269,7 +270,7 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
             @ApiResponse(code = 200, message = ZtStrUtils.APIRESPONSE_MESSAGE, response = Object.class)
     })
     @ApiOperationSupport(order = 2001)
-    public final ZtResBeanEx insertBatchSimple(@Valid @RequestBody ZtValidList<T> entityList) throws Exception {
+    public final ZtResBeanEx insertBatchSimple(@Valid @RequestBody ZtValidList<T> entityList, BindingResult bindingResult) throws Exception {
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
         ztParamEntity.setEntityList(entityList.getList());
