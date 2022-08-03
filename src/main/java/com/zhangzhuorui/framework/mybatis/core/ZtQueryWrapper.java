@@ -74,6 +74,10 @@ public class ZtQueryWrapper<T> implements Serializable {
 
     private String orderBy;
 
+    private Boolean ascFlag;
+
+    private Boolean chineseFlag;
+
     private String selectColumn = "*";
 
     private String nativeSql;
@@ -436,6 +440,22 @@ public class ZtQueryWrapper<T> implements Serializable {
 
     public void setOrderBy(String orderBy) {
         this.orderBy = orderBy;
+    }
+
+    public Boolean getAscFlag() {
+        return ascFlag;
+    }
+
+    public void setAscFlag(Boolean ascFlag) {
+        this.ascFlag = ascFlag;
+    }
+
+    public Boolean getChineseFlag() {
+        return chineseFlag;
+    }
+
+    public void setChineseFlag(Boolean chineseFlag) {
+        this.chineseFlag = chineseFlag;
     }
 
     public String getSelectColumn() {

@@ -99,7 +99,18 @@ public class ZtSimpleBaseSelectProvider {
                 fromWhereStr.append(" GROUP BY ").append(qw.getTableName()).append(".").append(qw.getGroupBy());
             }
             if (null != qw.getOrderBy()) {
-                fromWhereStr.append(" ORDER BY ").append(qw.getTableName()).append(".").append(qw.getOrderBy());
+                fromWhereStr.append(" ORDER BY ");
+                if (null != qw.getChineseFlag() && qw.getChineseFlag()) {
+                    fromWhereStr.append(" CONVERT(").append(qw.getOrderBy()).append(" USING GBK) ");
+                } else {
+                    fromWhereStr.append(qw.getOrderBy());
+                }
+
+                if (null != qw.getAscFlag() && qw.getAscFlag()) {
+                    fromWhereStr.append(" ASC ");
+                } else {
+                    fromWhereStr.append(" DESC ");
+                }
             } else {
                 ResultMapping idResultMapping = ((ResultMap) qw.getResultMap()).getIdResultMappings().get(0);
                 fromWhereStr.append(" ORDER BY ").append(qw.getTableName()).append(".").append(idResultMapping.getColumn()).append(" DESC ");
