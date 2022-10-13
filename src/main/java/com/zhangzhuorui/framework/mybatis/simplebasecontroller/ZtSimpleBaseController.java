@@ -7,6 +7,7 @@ import com.zhangzhuorui.framework.core.ZtResBeanEx;
 import com.zhangzhuorui.framework.core.ZtResBeanExConfig;
 import com.zhangzhuorui.framework.core.ZtSpringUtil;
 import com.zhangzhuorui.framework.core.ZtStrUtils;
+import com.zhangzhuorui.framework.mybatis.core.ZtInsertBatchEntity;
 import com.zhangzhuorui.framework.mybatis.core.ZtParamEntity;
 import com.zhangzhuorui.framework.mybatis.core.ZtValidList;
 import com.zhangzhuorui.framework.mybatis.simplebaseservice.IZtSimpleBaseService;
@@ -270,7 +271,8 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
             @ApiResponse(code = 200, message = ZtStrUtils.APIRESPONSE_MESSAGE, response = Object.class)
     })
     @ApiOperationSupport(order = 2001)
-    public final ZtResBeanEx insertBatchSimple(@Valid @RequestBody ZtValidList<T> entityList, BindingResult bindingResult) throws Exception {
+    public final ZtResBeanEx insertBatchSimple(@Valid @RequestBody ZtInsertBatchEntity<T> ztInsertBatchEntity, BindingResult bindingResult) throws Exception {
+        ZtValidList<T> entityList = ztInsertBatchEntity.getEntityList();
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
         ztParamEntity.setEntityList(entityList.getList());
