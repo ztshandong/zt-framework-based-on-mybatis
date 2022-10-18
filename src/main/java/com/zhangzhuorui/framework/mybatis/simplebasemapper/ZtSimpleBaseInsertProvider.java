@@ -88,7 +88,8 @@ public class ZtSimpleBaseInsertProvider {
         values.append(" ), ");
         String tmp = values.toString();
         values = new StringBuilder();
-        for (int i = 0; i < qw.getObjList().size(); i++) {
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
             values.append(tmp.replace("(INDEX)", String.valueOf(i)));
         }
         values.deleteCharAt(values.length() - 2);
