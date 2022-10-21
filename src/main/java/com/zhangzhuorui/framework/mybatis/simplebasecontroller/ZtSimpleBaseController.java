@@ -1,5 +1,8 @@
 package com.zhangzhuorui.framework.mybatis.simplebasecontroller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.zhangzhuorui.framework.core.ZtBasicEntity;
 import com.zhangzhuorui.framework.core.ZtBasicNumberIdEntity4Swagger;
 import com.zhangzhuorui.framework.core.ZtPage;
@@ -7,9 +10,7 @@ import com.zhangzhuorui.framework.core.ZtResBeanEx;
 import com.zhangzhuorui.framework.core.ZtResBeanExConfig;
 import com.zhangzhuorui.framework.core.ZtSpringUtil;
 import com.zhangzhuorui.framework.core.ZtStrUtils;
-import com.zhangzhuorui.framework.mybatis.core.ZtInsertBatchEntity;
 import com.zhangzhuorui.framework.mybatis.core.ZtParamEntity;
-import com.zhangzhuorui.framework.mybatis.core.ZtValidList;
 import com.zhangzhuorui.framework.mybatis.simplebaseservice.IZtSimpleBaseService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -28,9 +29,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.beans.Introspector;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.CharBuffer;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -271,11 +276,24 @@ public abstract class ZtSimpleBaseController<T extends ZtBasicEntity> {
             @ApiResponse(code = 200, message = ZtStrUtils.APIRESPONSE_MESSAGE, response = Object.class)
     })
     @ApiOperationSupport(order = 2001)
-    public final ZtResBeanEx insertBatchSimple(@Valid @RequestBody ZtInsertBatchEntity<T> ztInsertBatchEntity, BindingResult bindingResult) throws Exception {
-        ZtValidList<T> entityList = ztInsertBatchEntity.getEntityList();
+    public final ZtResBeanEx insertBatchSimple(HttpServletRequest request, BindingResult bindingResult) throws Exception {
+        int len = request.getContentLength();
+        StringBuffer data = new StringBuffer((int) (len * 1.2));
+        ServletInputStream inputStream = request.getInputStream();
+        InputStreamReader isr = new InputStreamReader(inputStream, "UTF-8");
+        BufferedReader in = new BufferedReader(isr);
+        CharBuffer bos = CharBuffer.allocate(len);
+        while (in.read(bos) != -1) {
+            bos.flip();
+            data.append(bos.toString());
+        }
+        JSONObject jsonObject2 = JSON.parseObject(data.toString());
+        JSONArray jsonArray = (JSONArray) jsonObject2.get("entityList");
+        List<T> list = JSONObject.parseArray(jsonArray.toJSONString(), getIZtSimpleBaseService().getEntityClass());
+
         ZtParamEntity<T> ztParamEntity = new ZtParamEntity<>();
         ztParamEntity.setZtResBeanEx(ZtResBeanEx.ok());
-        ztParamEntity.setEntityList(entityList.getList());
+        ztParamEntity.setEntityList(list);
         ztParamEntity = getThisController().beforeInsertBatch(ztParamEntity);
         //controller层判断是否允许新增
         if (ztParamEntity.isCanInsert()) {
