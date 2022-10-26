@@ -414,7 +414,7 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
                 ResultMapping resultMapping = any.get();
                 if (resultMapping.getNestedQueryId() == null && resultMapping.getNestedResultMapId() == null && resultMapping.getColumn() != null) {
                     ZtQueryConditionEntity entity = new ZtQueryConditionEntity();
-                    entity.setFieldName(propertyName);
+                    entity.setFieldName(resultMapping.getProperty());
                     String column = resultMapping.getColumn();
                     entity.setColumnName(column);
                     Optional<ZtQueryConditionEntity> curQueryConditionEntity = entityList.stream().filter(t -> t.getFieldName().equals(finalPropertyName)).findAny();
@@ -429,6 +429,33 @@ public abstract class ZtSimpleBaseServiceImpl<T extends ZtBasicEntity> implement
                             entity.setQueryWrapper(ZtQueryWrapperEnum.IN);
                         }
                         isList = false;
+                    }
+                }
+            } else {
+                Map<String, String> jsonFieldMap = getJsonFieldMap();
+                if (null != jsonFieldMap) {
+                    String realFieldName = jsonFieldMap.get(propertyName);
+                    if (null != realFieldName) {
+                        ResultMapping resultMapping = getResultMap().getResultMappings().stream().filter(t -> t.getProperty().equals(realFieldName)).findAny().get();
+                        if (resultMapping.getNestedQueryId() == null && resultMapping.getNestedResultMapId() == null && resultMapping.getColumn() != null) {
+                            ZtQueryConditionEntity entity = new ZtQueryConditionEntity();
+                            entity.setFieldName(resultMapping.getProperty());
+                            String column = resultMapping.getColumn();
+                            entity.setColumnName(column);
+                            Optional<ZtQueryConditionEntity> curQueryConditionEntity = entityList.stream().filter(t -> t.getFieldName().equals(finalPropertyName)).findAny();
+                            if (!curQueryConditionEntity.isPresent()) {
+                                entityList.add(entity);
+                            } else {
+                                entity = curQueryConditionEntity.get();
+                            }
+                            if (isList) {
+                                if (objValue instanceof List) {
+                                    entity.setList(objValue);
+                                    entity.setQueryWrapper(ZtQueryWrapperEnum.IN);
+                                }
+                                isList = false;
+                            }
+                        }
                     }
                 }
             }

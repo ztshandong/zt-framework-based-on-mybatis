@@ -10,6 +10,7 @@ import org.apache.ibatis.mapping.SqlCommandType;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author :  张涛 zhangtao
@@ -27,6 +28,11 @@ public interface IZtSimpleBaseService<T> {
         ztPage.setTotal(0);
         ztPage.setResults(Collections.emptyList());
         return ztPage;
+    }
+
+    // 支持@JSONField别名
+    default Map<String, String> getJsonFieldMap() {
+        return null;
     }
 
     Class<T> getEntityClass();
